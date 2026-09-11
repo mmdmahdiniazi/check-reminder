@@ -1,5 +1,4 @@
 import { useEffect, useRef, useState } from "react";
-
 import { supabase } from "../lib/supabase";
 
 type Notification = {
@@ -12,8 +11,8 @@ type Notification = {
 
 function NotificationBell() {
   const [notifications, setNotifications] = useState<Notification[]>([]);
-
   const [isOpen, setIsOpen] = useState(false);
+  const [isMarkingAll, setIsMarkingAll] = useState(false);
 
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -55,12 +54,10 @@ function NotificationBell() {
     };
 
     document.addEventListener("pointerdown", handlePointerDown);
-
     window.addEventListener("keydown", handleKeyDown);
 
     return () => {
       document.removeEventListener("pointerdown", handlePointerDown);
-
       window.removeEventListener("keydown", handleKeyDown);
     };
   }, [isOpen]);
@@ -101,12 +98,16 @@ function NotificationBell() {
 
     if (unreadIds.length === 0) return;
 
+    setIsMarkingAll(true);
+
     const { error } = await supabase
       .from("notifications")
       .update({
         is_read: true,
       })
       .in("id", unreadIds);
+
+    setIsMarkingAll(false);
 
     if (error) {
       console.error("Error marking notifications as read:", error);
@@ -126,9 +127,14 @@ function NotificationBell() {
       <button
         type="button"
         onClick={() => setIsOpen((prev) => !prev)}
-        className="relative flex h-11 w-11 items-center justify-center rounded-lg border bg-white text-gray-600 transition hover:bg-gray-50"
+        className={`relative flex h-11 w-11 items-center justify-center rounded-xl border transition ${
+          isOpen
+            ? "border-gray-300 bg-gray-100 text-gray-900"
+            : "border-gray-200 bg-white text-gray-600 hover:bg-gray-50"
+        }`}
         aria-label="اعلان‌ها"
         aria-expanded={isOpen}
+        aria-haspopup="true"
       >
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -137,6 +143,7 @@ function NotificationBell() {
           strokeWidth={1.8}
           stroke="currentColor"
           className="h-5 w-5"
+          aria-hidden="true"
         >
           <path
             strokeLinecap="round"
@@ -146,21 +153,22 @@ function NotificationBell() {
         </svg>
 
         {unreadCount > 0 && (
-          <span className="absolute -right-1 -top-1 flex h-5 min-w-5 items-center justify-center rounded-full bg-red-500 px-1 text-[10px] font-bold text-white">
+          <span className="absolute -right-1 -top-1 flex h-5 min-w-5 items-center justify-center rounded-full bg-red-500 px-1 text-[10px] font-bold text-white ring-2 ring-white">
             {unreadCount > 9 ? "9+" : unreadCount}
           </span>
         )}
       </button>
 
       {isOpen && (
-        <div className="fixed inset-x-4 top-20 z-50 overflow-hidden rounded-xl border bg-white shadow-lg sm:absolute sm:left-0 sm:right-auto sm:top-12 sm:w-[350px]">
-          {/* Header */}
-          <div className="flex items-center justify-between border-b px-4 py-3">
+        <div className="fixed inset-x-4 top-20 z-50 overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-2xl sm:absolute sm:left-0 sm:right-auto sm:top-14 sm:w-[370px]">
+          <div className="flex items-center justify-between border-b border-gray-100 px-4 py-4">
             <div>
-              <h3 className="text-sm font-semibold text-gray-900">اعلان‌ها</h3>
+              <h3 className="text-sm font-bold text-gray-950">اعلان‌ها</h3>
 
-              <p className="mt-0.5 text-xs text-gray-400">
-                {unreadCount} اعلان خوانده نشده
+              <p className="mt-1 text-xs text-gray-400">
+                {unreadCount === 0
+                  ? "همه اعلان‌ها خوانده شده‌اند"
+                  : `${unreadCount} اعلان خوانده نشده`}
               </p>
             </div>
 
@@ -168,18 +176,41 @@ function NotificationBell() {
               <button
                 type="button"
                 onClick={handleMarkAllAsRead}
-                className="min-h-10 rounded-lg px-2 text-xs font-medium text-gray-500 transition hover:bg-gray-100 hover:text-gray-900"
+                disabled={isMarkingAll}
+                className="rounded-lg px-3 py-2 text-xs font-medium text-gray-500 transition hover:bg-gray-100 hover:text-gray-900 disabled:cursor-not-allowed disabled:opacity-50"
               >
-                خواندن همه
+                {isMarkingAll ? "در حال انجام..." : "خواندن همه"}
               </button>
             )}
           </div>
 
-          {/* Notifications */}
-          <div className="max-h-[60vh] overflow-y-auto sm:max-h-[400px]">
+          <div className="max-h-[60vh] overflow-y-auto sm:max-h-[420px]">
             {notifications.length === 0 ? (
-              <div className="px-4 py-10 text-center">
-                <p className="text-sm text-gray-500">اعلانی وجود ندارد</p>
+              <div className="px-4 py-12 text-center">
+                <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-2xl bg-gray-100 text-gray-400">
+                  <svg
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="1.7"
+                    className="h-6 w-6"
+                    aria-hidden="true"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M15 17h5l-1.5-2.5V10a6.5 6.5 0 0 0-13 0v4.5L4 17h5m6 0a3 3 0 0 1-6 0"
+                    />
+                  </svg>
+                </div>
+
+                <p className="text-sm font-medium text-gray-600">
+                  اعلانی وجود ندارد
+                </p>
+
+                <p className="mt-1 text-xs text-gray-400">
+                  اعلان‌های مربوط به سررسید چک‌ها اینجا نمایش داده می‌شوند.
+                </p>
               </div>
             ) : (
               notifications.map((notification) => (
@@ -187,23 +218,37 @@ function NotificationBell() {
                   key={notification.id}
                   type="button"
                   onClick={() => handleMarkAsRead(notification.id)}
-                  className={`block w-full border-b px-4 py-4 text-right transition last:border-b-0 hover:bg-gray-50 ${
-                    !notification.is_read ? "bg-gray-50" : "bg-white"
+                  className={`block w-full border-b border-gray-100 px-4 py-4 text-right transition last:border-b-0 hover:bg-gray-50 ${
+                    notification.is_read ? "bg-white" : "bg-gray-50/80"
                   }`}
                 >
                   <div className="flex gap-3">
                     <span
-                      className={`mt-1.5 h-2 w-2 shrink-0 rounded-full ${
+                      className={`mt-1.5 h-2.5 w-2.5 shrink-0 rounded-full ${
                         notification.is_read ? "bg-gray-300" : "bg-red-500"
                       }`}
                     />
 
-                    <div className="min-w-0">
-                      <p className="text-sm font-medium text-gray-800">
-                        {notification.title}
-                      </p>
+                    <div className="min-w-0 flex-1">
+                      <div className="flex items-start justify-between gap-2">
+                        <p
+                          className={`text-sm ${
+                            notification.is_read
+                              ? "font-medium text-gray-700"
+                              : "font-bold text-gray-900"
+                          }`}
+                        >
+                          {notification.title}
+                        </p>
 
-                      <p className="mt-1 text-xs leading-5 text-gray-500">
+                        {!notification.is_read && (
+                          <span className="shrink-0 rounded-full bg-red-50 px-2 py-0.5 text-[10px] font-medium text-red-600">
+                            جدید
+                          </span>
+                        )}
+                      </div>
+
+                      <p className="mt-1 text-xs leading-6 text-gray-500">
                         {notification.message}
                       </p>
                     </div>

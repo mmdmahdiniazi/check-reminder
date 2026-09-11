@@ -1,7 +1,5 @@
 import { useEffect, useState } from "react";
-
 import type { Check } from "../types/check";
-
 import moment from "moment-jalaali";
 
 type CheckModalProps = {
@@ -20,6 +18,11 @@ type FormErrors = {
   dueDate?: string;
   amount?: string;
 };
+
+const inputBaseClass =
+  "w-full rounded-xl border bg-white px-3.5 py-3 text-sm text-gray-900 outline-none transition placeholder:text-gray-400 focus:border-gray-400 focus:ring-4 focus:ring-gray-100";
+
+const labelClass = "mb-2 block text-sm font-medium text-gray-700";
 
 function CheckModal({
   check,
@@ -193,71 +196,88 @@ function CheckModal({
     const originalOverflow = document.body.style.overflow;
 
     document.body.style.overflow = "hidden";
-
     window.addEventListener("keydown", handleKeyDown);
 
     return () => {
       document.body.style.overflow = originalOverflow;
-
       window.removeEventListener("keydown", handleKeyDown);
     };
   }, [isSaving, onClose]);
 
+  const getInputClass = (error?: string) =>
+    `${inputBaseClass} ${
+      error
+        ? "border-red-300 focus:border-red-400 focus:ring-red-50"
+        : "border-gray-200"
+    }`;
+
   return (
     <div
-      className="fixed inset-0 z-50 flex items-end justify-center bg-black/40 p-0 sm:items-center sm:p-4"
+      className="fixed inset-0 z-50 flex items-end justify-center bg-gray-950/45 p-0 backdrop-blur-[2px] sm:items-center sm:p-4"
       onMouseDown={onClose}
     >
       <div
-        className="flex max-h-[92dvh] w-full flex-col overflow-hidden rounded-t-2xl bg-white shadow-xl sm:max-h-[85vh] sm:max-w-lg sm:rounded-2xl"
-        onMouseDown={(e) => e.stopPropagation()}
+        className="flex max-h-[94dvh] w-full flex-col overflow-hidden rounded-t-3xl bg-white shadow-2xl sm:max-h-[88vh] sm:max-w-xl sm:rounded-3xl"
+        onMouseDown={(event) => event.stopPropagation()}
       >
-        {/* Header */}
-        <div className="flex shrink-0 items-center justify-between border-b px-4 py-4 sm:px-5">
-          <div className="min-w-0">
-            <h2 className="font-bold text-gray-900">
-              {isEditing ? "ویرایش چک" : "ثبت چک جدید"}
-            </h2>
+        <div className="flex shrink-0 items-center justify-between border-b border-gray-100 px-5 py-4 sm:px-6">
+          <div className="flex min-w-0 items-center gap-3">
+            <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-gray-100 text-gray-700">
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="1.8"
+                className="h-5 w-5"
+                aria-hidden="true"
+              >
+                <rect x="4" y="3" width="16" height="18" rx="2" />
+                <path d="M8 8h8M8 12h8M8 16h5" />
+              </svg>
+            </div>
 
-            <p className="mt-1 text-sm text-gray-500">
-              اطلاعات چک را وارد کنید
-            </p>
+            <div className="min-w-0">
+              <h2 className="truncate text-base font-bold text-gray-950">
+                {isEditing ? "ویرایش چک" : "ثبت چک جدید"}
+              </h2>
+
+              <p className="mt-1 text-xs text-gray-500">
+                اطلاعات چک را با دقت وارد کنید
+              </p>
+            </div>
           </div>
 
           <button
             type="button"
             onClick={onClose}
             disabled={isSaving}
-            className="mr-3 flex h-10 w-10 shrink-0 items-center justify-center rounded-lg text-xl text-gray-400 transition hover:bg-gray-100 hover:text-gray-700 disabled:cursor-not-allowed disabled:opacity-50"
             aria-label="بستن"
+            className="mr-3 flex h-10 w-10 shrink-0 items-center justify-center rounded-xl text-2xl leading-none text-gray-400 transition hover:bg-gray-100 hover:text-gray-700 disabled:cursor-not-allowed disabled:opacity-50"
           >
             ×
           </button>
         </div>
 
-        {/* Form */}
         <form
           onSubmit={handleSubmit}
           noValidate
           className="flex min-h-0 flex-1 flex-col"
         >
-          <div className="min-h-0 flex-1 space-y-4 overflow-y-auto px-4 py-4 sm:px-5 sm:py-5">
-            {/* Owner */}
+          <div className="min-h-0 flex-1 space-y-5 overflow-y-auto px-5 py-5 sm:px-6">
             <div>
-              <label className="mb-1.5 block text-sm font-medium text-gray-700">
+              <label htmlFor="ownerName" className={labelClass}>
                 نام صاحب چک
               </label>
 
               <input
+                id="ownerName"
                 name="ownerName"
                 value={formData.ownerName}
                 onChange={handleChange}
                 placeholder="مثلاً علی رضایی"
                 autoComplete="name"
                 autoFocus
-                className={`w-full rounded-lg border px-3 py-3 text-base outline-none transition focus:border-gray-400 sm:text-sm ${
-                  errors.ownerName ? "border-red-400" : "border-gray-200"
-                }`}
+                className={getInputClass(errors.ownerName)}
               />
 
               {errors.ownerName && (
@@ -267,13 +287,13 @@ function CheckModal({
               )}
             </div>
 
-            {/* Mobile */}
             <div>
-              <label className="mb-1.5 block text-sm font-medium text-gray-700">
+              <label htmlFor="mobile" className={labelClass}>
                 شماره موبایل
               </label>
 
               <input
+                id="mobile"
                 name="mobile"
                 value={formData.mobile}
                 onChange={handleChange}
@@ -282,9 +302,7 @@ function CheckModal({
                 autoComplete="tel"
                 maxLength={11}
                 dir="ltr"
-                className={`w-full rounded-lg border px-3 py-3 text-base outline-none transition focus:border-gray-400 sm:text-sm ${
-                  errors.mobile ? "border-red-400" : "border-gray-200"
-                }`}
+                className={getInputClass(errors.mobile)}
               />
 
               <p className="mt-1.5 text-xs text-gray-400">
@@ -296,19 +314,17 @@ function CheckModal({
               )}
             </div>
 
-            {/* Bank */}
             <div>
-              <label className="mb-1.5 block text-sm font-medium text-gray-700">
+              <label htmlFor="bank" className={labelClass}>
                 بانک
               </label>
 
               <select
+                id="bank"
                 name="bank"
                 value={formData.bank}
                 onChange={handleChange}
-                className={`w-full rounded-lg border bg-white px-3 py-3 text-base outline-none transition focus:border-gray-400 sm:text-sm ${
-                  errors.bank ? "border-red-400" : "border-gray-200"
-                }`}
+                className={getInputClass(errors.bank)}
               >
                 <option value="">انتخاب بانک</option>
                 <option value="بانک ملی">بانک ملی</option>
@@ -330,13 +346,13 @@ function CheckModal({
               )}
             </div>
 
-            {/* Sayadi */}
             <div>
-              <label className="mb-1.5 block text-sm font-medium text-gray-700">
+              <label htmlFor="sayadiNumber" className={labelClass}>
                 شماره صیادی
               </label>
 
               <input
+                id="sayadiNumber"
                 name="sayadiNumber"
                 value={formData.sayadiNumber}
                 onChange={handleChange}
@@ -344,9 +360,9 @@ function CheckModal({
                 maxLength={16}
                 inputMode="numeric"
                 dir="ltr"
-                className={`w-full rounded-lg border px-3 py-3 text-base tracking-wider outline-none transition focus:border-gray-400 sm:text-sm ${
-                  errors.sayadiNumber ? "border-red-400" : "border-gray-200"
-                }`}
+                className={`${getInputClass(
+                  errors.sayadiNumber,
+                )} tracking-[0.18em]`}
               />
 
               <p className="mt-1.5 text-xs text-gray-400">
@@ -360,23 +376,21 @@ function CheckModal({
               )}
             </div>
 
-            {/* Serial + Due Date */}
-            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+            <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
               <div>
-                <label className="mb-1.5 block text-sm font-medium text-gray-700">
+                <label htmlFor="serialNumber" className={labelClass}>
                   شماره سریال
                 </label>
 
                 <input
+                  id="serialNumber"
                   name="serialNumber"
                   value={formData.serialNumber}
                   onChange={handleChange}
                   placeholder="شماره سریال"
                   inputMode="numeric"
                   dir="ltr"
-                  className={`w-full rounded-lg border px-3 py-3 text-base outline-none transition focus:border-gray-400 sm:text-sm ${
-                    errors.serialNumber ? "border-red-400" : "border-gray-200"
-                  }`}
+                  className={getInputClass(errors.serialNumber)}
                 />
 
                 {errors.serialNumber && (
@@ -387,11 +401,12 @@ function CheckModal({
               </div>
 
               <div>
-                <label className="mb-1.5 block text-sm font-medium text-gray-700">
+                <label htmlFor="dueDate" className={labelClass}>
                   تاریخ سررسید
                 </label>
 
                 <input
+                  id="dueDate"
                   type="text"
                   name="dueDate"
                   value={formData.dueDate}
@@ -400,9 +415,7 @@ function CheckModal({
                   inputMode="numeric"
                   maxLength={10}
                   dir="ltr"
-                  className={`w-full rounded-lg border px-3 py-3 text-base outline-none transition focus:border-gray-400 sm:text-sm ${
-                    errors.dueDate ? "border-red-400" : "border-gray-200"
-                  }`}
+                  className={getInputClass(errors.dueDate)}
                 />
 
                 <p className="mt-1.5 text-xs text-gray-400">فرمت: 1405/07/20</p>
@@ -415,14 +428,14 @@ function CheckModal({
               </div>
             </div>
 
-            {/* Amount */}
             <div>
-              <label className="mb-1.5 block text-sm font-medium text-gray-700">
+              <label htmlFor="amount" className={labelClass}>
                 مبلغ چک
               </label>
 
               <div className="relative">
                 <input
+                  id="amount"
                   type="text"
                   name="amount"
                   value={formData.amount}
@@ -430,12 +443,12 @@ function CheckModal({
                   placeholder="50000000"
                   inputMode="numeric"
                   dir="ltr"
-                  className={`w-full rounded-lg border px-3 py-3 pl-16 text-base outline-none transition focus:border-gray-400 sm:text-sm ${
-                    errors.amount ? "border-red-400" : "border-gray-200"
-                  }`}
+                  className={`${getInputClass(
+                    errors.amount,
+                  )} pl-16 text-base font-medium tabular-nums`}
                 />
 
-                <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-xs text-gray-400">
+                <span className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-xs text-gray-400">
                   تومان
                 </span>
               </div>
@@ -450,14 +463,13 @@ function CheckModal({
             </div>
           </div>
 
-          {/* Footer */}
-          <div className="shrink-0 border-t bg-gray-50 px-4 py-3 pb-[calc(0.75rem+env(safe-area-inset-bottom))] sm:px-5 sm:py-4 sm:pb-4">
+          <div className="shrink-0 border-t border-gray-100 bg-gray-50/90 px-5 py-4 pb-[calc(1rem+env(safe-area-inset-bottom))] sm:px-6">
             <div className="grid grid-cols-2 gap-3">
               <button
                 type="button"
                 onClick={onClose}
                 disabled={isSaving}
-                className="min-h-11 rounded-lg border bg-white px-4 py-3 text-sm font-medium text-gray-700 transition hover:bg-gray-100 disabled:cursor-not-allowed disabled:opacity-50"
+                className="min-h-12 rounded-xl border border-gray-200 bg-white px-4 py-3 text-sm font-medium text-gray-700 transition hover:bg-gray-100 disabled:cursor-not-allowed disabled:opacity-50"
               >
                 انصراف
               </button>
@@ -465,7 +477,7 @@ function CheckModal({
               <button
                 type="submit"
                 disabled={isSaving}
-                className="min-h-11 rounded-lg bg-black px-4 py-3 text-sm font-medium text-white transition hover:bg-gray-800 disabled:cursor-not-allowed disabled:opacity-50"
+                className="min-h-12 rounded-xl bg-gray-950 px-4 py-3 text-sm font-medium text-white transition hover:bg-gray-800 disabled:cursor-not-allowed disabled:opacity-50"
               >
                 {isSaving ? (
                   <span className="flex items-center justify-center gap-2">
