@@ -214,7 +214,9 @@ function CheckModal({
   return (
     <div
       className="fixed inset-0 z-50 flex items-end justify-center bg-gray-950/45 p-0 backdrop-blur-[2px] sm:items-center sm:p-4"
-      onMouseDown={onClose}
+      onMouseDown={() => {
+        if (!isSaving) onClose();
+      }}
     >
       <div
         className="flex max-h-[94dvh] w-full flex-col overflow-hidden rounded-t-3xl bg-white shadow-2xl sm:max-h-[88vh] sm:max-w-xl sm:rounded-3xl"

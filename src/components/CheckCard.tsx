@@ -165,7 +165,7 @@ function CheckCard({
           <p className="text-xs text-gray-400">شماره صیادی</p>
 
           <p
-            className="mt-1.5 truncate text-sm font-medium text-gray-700"
+            className="mt-1.5 break-all text-sm font-medium text-gray-700"
             dir="ltr"
           >
             {check.sayadiNumber}
