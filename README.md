@@ -1,389 +1,140 @@
 # Check Reminder
 
-A simple, lightweight Persian check management and due-date reminder application built with React, TypeScript, Tailwind CSS and Supabase.
+A lightweight Persian-language web app for managing received checks and tracking their due dates.
 
-**Check Reminder** is designed to provide a focused solution for recording received checks, tracking their due dates, and making upcoming payments easier to remember.
+**Live Demo:** https://check-reminder-y17h.vercel.app/  
+**Repository:** https://github.com/mmdmahdiniazi/check-reminder
 
----
-
-## Overview
-
-Managing multiple checks can quickly become difficult, especially when due dates are spread across different days.
-
-Check Reminder keeps the process simple:
-
-- Register received checks
-- Store important check information
-- Track due dates
-- Display the nearest upcoming due date
-- Identify checks due during the current week
-- Show the current status of each check
-- Edit or delete existing checks
-- Generate due-date reminder notifications
-- Search through registered checks
-
-The project intentionally keeps the interface simple and focused instead of turning into a full accounting or financial management system.
-
----
+Check Reminder helps users keep check details in one place, see approaching due dates, and review reminder notifications through a clean, responsive interface.
 
 ## Features
 
-### Check Management
-
-Each check can contain:
-
-- Owner name
-- Mobile number
-- Bank
-- Sayadi number
-- Serial number
-- Due date
-- Amount
-
-Users can:
-
-- Add a new check
-- Edit an existing check
-- Delete a check
-- View all registered checks
-
-### Due Date Tracking
-
-Each check displays its current due-date status.
-
-Depending on the remaining time, the application identifies checks as:
-
-- Normal
-- Approaching due date
-- Very close
-- Due tomorrow
-- Due today
-- Past due
-
-The dashboard also provides:
-
-- Total number of checks
-- Nearest due date
-- Number of checks due this week
-
-### Notifications
-
-The application generates reminder records for upcoming check due dates.
-
-Notifications are stored in Supabase and can be accessed through the notification interface.
-
-### Form Validation
-
-The check registration form includes validation for:
-
-- Owner name
-- Mobile number
-- Bank
-- 16-digit Sayadi number
-- Serial number
-- Jalali due date
-- Positive check amount
-
-### Responsive UI
-
-The interface is designed for both desktop and mobile screens.
-
-The layout adapts to smaller displays while keeping the main actions easily accessible.
-
-### User Feedback
-
-The application provides feedback for important operations through:
-
-- Loading states
-- Success messages
-- Error messages
-- Toast notifications
-- Confirmation before deleting a check
-
----
+- **Check management:** create, view, edit, and delete check records.
+- **Due-date tracking:** see each check's due-date status, including approaching, due today, and overdue states.
+- **Dashboard summary:** view the total number of checks, the nearest due date, and checks due this week.
+- **Reminder notifications:** view notifications stored in Supabase and mark them as read.
+- **Search:** find registered checks from the list.
+- **Form validation:** validate required fields, mobile number, 16-digit Sayadi number, Jalali due date, and positive amount.
+- **Responsive UI:** layouts designed for desktop and mobile screens.
+- **User feedback:** loading and error states, success/error toasts, and delete confirmation.
 
 ## Tech Stack
 
-| Technology     | Purpose                        |
-| -------------- | ------------------------------ |
-| React          | UI development                 |
-| TypeScript     | Type safety                    |
-| Vite           | Development and build tooling  |
-| Tailwind CSS   | Styling and responsive layout  |
-| Supabase       | Database and backend services  |
-| PostgreSQL     | Data storage through Supabase  |
-| Moment Jalaali | Persian/Jalali date validation |
-| ESLint         | Code quality and linting       |
+| Technology | Purpose |
+| --- | --- |
+| React | User interface |
+| TypeScript | Type safety |
+| Vite | Development server and production build |
+| Tailwind CSS | Styling and responsive layout |
+| Supabase | Backend services and data storage |
+| PostgreSQL | Database used through Supabase |
+| Moment Jalaali | Jalali date handling and validation |
+| ESLint | Code quality checks |
 
----
+## Screenshots
 
-## Project Structure
-
-```text
-check-reminder/
-├── public/
-│   ├── favicon.svg
-│   └── icons.svg
-│
-├── src/
-│   ├── assets/
-│   │   ├── hero.png
-│   │   ├── react.svg
-│   │   └── vite.svg
-│   │
-│   ├── components/
-│   │   ├── CheckCard.tsx
-│   │   ├── CheckModal.tsx
-│   │   ├── NotificationBell.tsx
-│   │   └── Toast.tsx
-│   │
-│   ├── lib/
-│   │   └── supabase.ts
-│   │
-│   ├── types/
-│   │   └── check.ts
-│   │
-│   ├── utils/
-│   │   ├── date.ts
-│   │   └── format.ts
-│   │
-│   ├── App.tsx
-│   ├── App.css
-│   ├── index.css
-│   └── main.tsx
-│
-├── .gitignore
-├── eslint.config.js
-├── index.html
-├── package.json
-├── package-lock.json
-├── tsconfig.app.json
-├── tsconfig.json
-├── tsconfig.node.json
-└── vite.config.ts
-```
-
----
+Screenshots will be added here.
 
 ## Getting Started
 
-### Prerequisites
-
-Make sure you have the following installed:
+### Requirements
 
 - Node.js
 - npm
-- Git
 - A Supabase project
 
-### Installation
-
-Clone the repository:
+### 1. Clone the repository
 
 ```bash
 git clone https://github.com/mmdmahdiniazi/check-reminder.git
-```
-
-Move into the project directory:
-
-```bash
 cd check-reminder
 ```
 
-Install dependencies:
+### 2. Install dependencies
 
 ```bash
 npm install
 ```
 
+### 3. Configure environment variables
+
 Create a `.env.local` file in the project root:
 
 ```env
 VITE_SUPABASE_URL=your_supabase_project_url
-VITE_SUPABASE_ANON_KEY=your_supabase_anon_key
+VITE_SUPABASE_ANON_KEY=your_supabase_public_key
 ```
 
-Then start the development server:
+Use your own Supabase project URL and public client key. Do not commit `.env.local` or expose a service-role or secret key in client-side environment variables.
+
+### 4. Run locally
 
 ```bash
 npm run dev
 ```
 
-The application will be available through the local Vite development server.
+Vite will print the local development URL in the terminal.
 
----
+### 5. Build for production
+
+```bash
+npm run build
+```
+
+The production build is generated in the `dist` directory.
 
 ## Environment Variables
 
-The project uses the following environment variables:
+| Variable | Description |
+| --- | --- |
+| `VITE_SUPABASE_URL` | Supabase project URL |
+| `VITE_SUPABASE_ANON_KEY` | Supabase public client key |
 
-| Variable                 | Description                       |
-| ------------------------ | --------------------------------- |
-| `VITE_SUPABASE_URL`      | Supabase project URL              |
-| `VITE_SUPABASE_ANON_KEY` | Supabase anonymous/public API key |
+Both variables must be configured in your deployment environment as well as locally.
 
-Environment files are excluded from Git through `.gitignore`.
-
-**Never commit private API keys, service-role keys, passwords, or other secrets to the repository.**
-
----
-
-## Database
-
-The application uses Supabase as its backend.
-
-The main data entities are:
-
-### `checks`
-
-Stores registered check information.
-
-Typical fields include:
+## Project Structure
 
 ```text
-id
-bank
-sayadi_number
-serial_number
-due_date
-amount
-owner_name
-mobile
-created_at
+src/
+├── components/
+│   ├── CheckCard.tsx
+│   ├── CheckModal.tsx
+│   ├── NotificationBell.tsx
+│   └── Toast.tsx
+├── lib/
+│   └── supabase.ts
+├── types/
+│   └── check.ts
+├── utils/
+│   ├── date.ts
+│   └── format.ts
+├── App.tsx
+├── index.css
+└── main.tsx
 ```
-
-### `notifications`
-
-Stores generated due-date reminder records.
-
-Typical fields include:
-
-```text
-id
-check_id
-title
-message
-reminder_type
-created_at
-```
-
----
-
-## Design Principles
-
-Check Reminder follows a few simple principles:
-
-### Focus
-
-The application focuses on one core problem:
-
-> Remembering and managing check due dates.
-
-### Simplicity
-
-The interface avoids unnecessary financial/accounting features and keeps the main workflow short.
-
-### Mobile First
-
-Important actions and information remain accessible on smaller screens.
-
-### Clear Feedback
-
-Every important user action should provide an understandable result.
-
-### Maintainability
-
-The project separates:
-
-- UI components
-- Data access
-- Types
-- Date utilities
-- Formatting utilities
-
-This keeps the codebase easier to maintain and extend.
-
----
-
-## Current Version
-
-**Version:** `V1`
-
-**Status:** Frozen / Initial Release
-
-V1 represents the first stable version of the application's defined scope.
-
-The current version intentionally does not attempt to become a complete accounting platform.
-
----
 
 ## V1 Scope
 
-Included in V1:
+V1 focuses on the core check-management workflow: maintaining check records, tracking due dates, viewing reminder notifications, validating form data, and using the app on desktop or mobile.
 
-- Check registration
-- Check editing
-- Check deletion
-- Check list
-- Check information display
-- Due-date status
-- Nearest due date
-- Weekly due-date count
-- Reminder notification records
-- Form validation
-- Search field UI
-- Responsive interface
-- Loading states
-- Error handling
-- Toast feedback
-- Supabase integration
+Authentication, user-specific access control, and additional financial-management features are outside the current V1 scope.
 
-The scope of V1 is considered complete and frozen.
+## Deployment
 
----
+The frontend is deployed on Vercel and uses Supabase for backend services.
 
-## Future Development
+- **Production app:** https://check-reminder-y17h.vercel.app/
+- **GitHub repository:** https://github.com/mmdmahdiniazi/check-reminder
 
-Future versions may introduce additional capabilities depending on product decisions and user requirements.
-
-Potential directions could include:
-
-- Authentication
-- User-specific check management
-- Advanced search and filtering
-- More detailed notification management
-- Better notification scheduling
-- Check categorization
-- Dashboard improvements
-- Mobile application
-- Additional financial tracking capabilities
-
-These features are **not part of V1**.
-
----
-
-## Repository
-
-GitHub:
-
-https://github.com/mmdmahdiniazi/check-reminder
-
----
+Configure `VITE_SUPABASE_URL` and `VITE_SUPABASE_ANON_KEY` in the Vercel project settings before deploying. Redeploy after changing environment variables.
 
 ## Author
 
-**Mohammad Niazi**
-
+**Mohammad Niazi**  
 Frontend Developer / Computer Engineering Student
 
-GitHub:
-
-https://github.com/mmdmahdiniazi
-
----
+- GitHub: https://github.com/mmdmahdiniazi
 
 ## License
 
-This project is currently published for portfolio, learning, and development purposes.
-
-A formal open-source license can be added in the future if the project is officially released under one.
+No formal open-source license has been added yet. Unless a license is added to the repository, reuse and redistribution are not granted by an explicit open-source license.
