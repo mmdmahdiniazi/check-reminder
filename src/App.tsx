@@ -300,6 +300,17 @@ function App() {
 
             <button
               type="button"
+              onClick={async () => {
+                const { error } = await supabase.auth.signOut();
+                if (error) showToast("error", "خروج از حساب انجام نشد.");
+              }}
+              className="inline-flex min-h-11 items-center justify-center rounded-xl border border-gray-200 bg-white px-3 py-2.5 text-sm font-medium text-gray-600 transition hover:bg-gray-50"
+            >
+              خروج
+            </button>
+
+            <button
+              type="button"
               onClick={handleOpenAddModal}
               disabled={isSaving}
               className="inline-flex min-h-11 items-center justify-center gap-1.5 rounded-xl bg-gray-900 px-3.5 py-2.5 text-sm font-semibold text-white transition hover:bg-gray-800 disabled:cursor-not-allowed disabled:opacity-50 sm:px-4"
