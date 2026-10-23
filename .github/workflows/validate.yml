@@ -5,10 +5,12 @@ on:
     branches:
       - main
       - feature/user-roles-and-plans
+      - design/fintech-shadcn-complete
   push:
     branches:
       - main
       - feature/user-roles-and-plans
+      - design/fintech-shadcn-complete
 
 permissions:
   contents: read
