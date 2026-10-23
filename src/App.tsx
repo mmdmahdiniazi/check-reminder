@@ -140,8 +140,12 @@ function App() {
       setIsProfileLoading(true);
       setProfileError("");
       try {
-        const { data: { user }, error: userError } = await supabase.auth.getUser();
-        if (userError || !user) throw new Error("اطلاعات کاربر واردشده دریافت نشد.");
+        const {
+          data: { user },
+          error: userError,
+        } = await supabase.auth.getUser();
+        if (userError || !user)
+          throw new Error("اطلاعات کاربر واردشده دریافت نشد.");
 
         const { data, error } = await supabase
           .from("profiles")
@@ -152,11 +156,17 @@ function App() {
 
         const validRoles: UserRole[] = ["user", "admin", "super_admin"];
         const validPlans: UserPlan[] = ["free", "pro", "enterprise"];
-        if (!validRoles.includes(data.role as UserRole) || !validPlans.includes(data.plan as UserPlan)) {
+        if (
+          !validRoles.includes(data.role as UserRole) ||
+          !validPlans.includes(data.plan as UserPlan)
+        ) {
           throw new Error("نقش یا پلن حساب معتبر نیست.");
         }
         if (active) {
-          setProfile({ role: data.role as UserRole, plan: data.plan as UserPlan });
+          setProfile({
+            role: data.role as UserRole,
+            plan: data.plan as UserPlan,
+          });
         }
       } catch (error) {
         console.error("Error fetching profile:", error);
@@ -170,9 +180,10 @@ function App() {
     };
 
     void loadProfile();
-    return () => { active = false; };
+    return () => {
+      active = false;
+    };
   }, []);
-
 
   useEffect(() => {
     if (!toast) return;
@@ -187,7 +198,12 @@ function App() {
   }, [toast]);
 
   if (showAdminPanel && profile && profile.role !== "user") {
-    return <AdminPanel currentRole={profile.role} onBack={() => setShowAdminPanel(false)} />;
+    return (
+      <AdminPanel
+        currentRole={profile.role}
+        onBack={() => setShowAdminPanel(false)}
+      />
+    );
   }
 
   const handleSaveCheck = async (check: Check) => {
@@ -395,7 +411,12 @@ function App() {
   };
 
   if (showAdminPanel && profile && profile.role !== "user") {
-    return <AdminPanel currentRole={profile.role} onBack={() => setShowAdminPanel(false)} />;
+    return (
+      <AdminPanel
+        currentRole={profile.role}
+        onBack={() => setShowAdminPanel(false)}
+      />
+    );
   }
 
   return (
@@ -410,7 +431,7 @@ function App() {
 
               <div className="min-w-0">
                 <h1 className="truncate text-base font-extrabold text-gray-900 sm:text-lg">
-                  چک‌بان
+                  یادآور چک
                 </h1>
 
                 <p className="mt-0.5 hidden text-xs text-gray-500 sm:block">
@@ -492,7 +513,10 @@ function App() {
       <main className="mx-auto max-w-7xl px-4 py-6 sm:px-6 sm:py-8 lg:px-8">
         <section className="mb-6 flex flex-col gap-4 rounded-3xl border border-white/80 bg-gradient-to-l from-white via-white to-teal-50/70 p-5 shadow-sm shadow-slate-900/[0.025] sm:mb-8 sm:flex-row sm:items-end sm:justify-between sm:p-7">
           <div>
-            <p className="mb-2 inline-flex items-center gap-2 rounded-full border border-teal-100 bg-teal-50 px-3 py-1 text-xs font-bold text-teal-800">نمای کلی حساب <span className="h-1.5 w-1.5 rounded-full bg-teal-600" /></p>
+            <p className="mb-2 inline-flex items-center gap-2 rounded-full border border-teal-100 bg-teal-50 px-3 py-1 text-xs font-bold text-teal-800">
+              نمای کلی حساب{" "}
+              <span className="h-1.5 w-1.5 rounded-full bg-teal-600" />
+            </p>
 
             <h2 className="text-2xl font-bold tracking-tight text-gray-950 sm:text-3xl">
               وضعیت چک‌های شما
@@ -711,7 +735,13 @@ function App() {
                 اولین چک خود را ثبت کنید تا مدیریت سررسیدها شروع شود.
               </p>
 
-              <Button type="button" onClick={handleOpenAddModal} className="mt-6">ثبت اولین چک</Button>
+              <Button
+                type="button"
+                onClick={handleOpenAddModal}
+                className="mt-6"
+              >
+                ثبت اولین چک
+              </Button>
             </div>
           ) : filteredChecks.length === 0 ? (
             <div className="rounded-2xl border border-dashed border-gray-300 bg-white px-5 py-16 text-center">
