@@ -1,47 +1,43 @@
 # Check Reminder
 
-A lightweight Persian-language web app for managing received checks and tracking their due dates.
+A Persian, mobile-first cheque management web app built with React, TypeScript, Tailwind CSS, and Supabase. It helps users manage cheques, track Jalali due dates, and review reminder notifications.
 
-**Live Demo:** https://check-reminder-y17h.vercel.app/  
+**Current version:** `2.0.0`  
+**Live app:** https://check-reminder-y17h.vercel.app/  
 **Repository:** https://github.com/mmdmahdiniazi/check-reminder
-
-Check Reminder helps users keep check details in one place, see approaching due dates, and review reminder notifications through a clean, responsive interface.
 
 ## Features
 
-- **Check management:** create, view, edit, and delete check records.
-- **Due-date tracking:** see each check's due-date status, including approaching, due today, and overdue states.
-- **Dashboard summary:** view the total number of checks, the nearest due date, and checks due this week.
-- **Reminder notifications:** view notifications stored in Supabase and mark them as read.
-- **Search:** find registered checks from the list.
-- **Form validation:** validate required fields, mobile number, 16-digit Sayadi number, Jalali due date, and positive amount.
-- **Responsive UI:** layouts designed for desktop and mobile screens.
-- **User feedback:** loading and error states, success/error toasts, and delete confirmation.
+- **Authentication:** sign up and sign in with Supabase.
+- **Cheque management:** create, view, edit, and delete cheque records.
+- **Jalali due dates:** validate and track cheque due dates, including upcoming, due-today, and overdue states.
+- **Dashboard:** see cheque totals, the nearest due date, and cheques due this week.
+- **Notifications:** review in-app reminders and mark notifications as read.
+- **Search:** find cheques from the dashboard.
+- **Role and plan management:** admin panel for user and plan management, backed by Supabase RPC functions.
+- **Validation and feedback:** validate required fields, mobile number, 16-digit Sayadi number, Jalali date, and positive amount; show loading, error, success, and confirmation states.
+- **Responsive interface:** light, modern fintech styling with Persian typography, designed for desktop and mobile.
 
 ## Tech Stack
 
 | Technology | Purpose |
 | --- | --- |
-| React | User interface |
+| React 19 | User interface |
 | TypeScript | Type safety |
 | Vite | Development server and production build |
-| Tailwind CSS | Styling and responsive layout |
-| Supabase | Backend services and data storage |
-| PostgreSQL | Database used through Supabase |
-| Moment Jalaali | Jalali date handling and validation |
+| Tailwind CSS 4 | Styling and responsive layout |
+| Supabase | Authentication, database, and backend functions |
+| PostgreSQL | Data storage through Supabase |
+| Moment Jalaali | Jalali date handling |
 | ESLint | Code quality checks |
 
-## Screenshots
+## Requirements
 
-Screenshots will be added here.
-
-## Getting Started
-
-### Requirements
-
-- Node.js
+- Node.js compatible with the installed Vite version
 - npm
-- A Supabase project
+- A Supabase project configured for this app
+
+## Run locally
 
 ### 1. Clone the repository
 
@@ -53,7 +49,7 @@ cd check-reminder
 ### 2. Install dependencies
 
 ```bash
-npm install
+npm ci
 ```
 
 ### 3. Configure environment variables
@@ -65,76 +61,81 @@ VITE_SUPABASE_URL=your_supabase_project_url
 VITE_SUPABASE_ANON_KEY=your_supabase_public_key
 ```
 
-Use your own Supabase project URL and public client key. Do not commit `.env.local` or expose a service-role or secret key in client-side environment variables.
+Use your own Supabase project URL and public client key. Never put a service-role key or other secret in a `VITE_*` client-side variable. Configure the same required variables in your deployment environment.
 
-### 4. Run locally
+### 4. Start the development server
 
 ```bash
 npm run dev
 ```
 
-Vite will print the local development URL in the terminal.
-
-### 5. Build for production
+### 5. Validate and build
 
 ```bash
+npm run lint
 npm run build
 ```
 
-The production build is generated in the `dist` directory.
+The production build is generated in `dist/`. To preview it locally:
 
-## Environment Variables
+```bash
+npm run preview
+```
 
-| Variable | Description |
-| --- | --- |
-| `VITE_SUPABASE_URL` | Supabase project URL |
-| `VITE_SUPABASE_ANON_KEY` | Supabase public client key |
+## Supabase setup
 
-Both variables must be configured in your deployment environment as well as locally.
+The app relies on Supabase for authentication and persisted data. Database tables, Row Level Security policies, RPC functions, and scheduled reminder infrastructure must be configured in the Supabase project using the project's SQL migrations and deployment setup. A successful frontend build does not apply these backend changes automatically.
 
-## Project Structure
+Ensure the required schema and policies are deployed before using the app in production. Never disable Row Level Security as a workaround.
+
+## Project structure
 
 ```text
 src/
 ├── components/
+│   ├── ui/                 # Reusable shadcn-style UI primitives
+│   ├── AdminPanel.tsx
 │   ├── CheckCard.tsx
 │   ├── CheckModal.tsx
 │   ├── NotificationBell.tsx
 │   └── Toast.tsx
 ├── lib/
-│   └── supabase.ts
+│   ├── supabase.ts
+│   └── utils.ts
 ├── types/
 │   └── check.ts
 ├── utils/
 │   ├── date.ts
 │   └── format.ts
 ├── App.tsx
+├── AuthGate.tsx
 ├── index.css
 └── main.tsx
 ```
 
-## V1 Scope
+The exact structure may evolve as the project develops.
 
-V1 focuses on the core check-management workflow: maintaining check records, tracking due dates, viewing reminder notifications, validating form data, and using the app on desktop or mobile.
+## Versioning
 
-Authentication, user-specific access control, and additional financial-management features are outside the current V1 scope.
+This project uses Semantic Versioning (`MAJOR.MINOR.PATCH`):
+
+- **MAJOR**: incompatible changes or a significant release boundary.
+- **MINOR**: new backward-compatible functionality.
+- **PATCH**: backward-compatible fixes and small refinements.
+
+The V1 baseline was `1.0.0`. Version `2.0.0` marks the next major project milestone, including the redesigned responsive interface and the expanded authenticated user/admin experience. The package version in `package.json` and `package-lock.json` should always match.
+
+See [CHANGELOG.md](./CHANGELOG.md) for release notes. Use Git tags in the format `vX.Y.Z` when publishing a release.
 
 ## Deployment
 
 The frontend is deployed on Vercel and uses Supabase for backend services.
 
 - **Production app:** https://check-reminder-y17h.vercel.app/
-- **GitHub repository:** https://github.com/mmdmahdiniazi/check-reminder
+- **Repository:** https://github.com/mmdmahdiniazi/check-reminder
 
-Configure `VITE_SUPABASE_URL` and `VITE_SUPABASE_ANON_KEY` in the Vercel project settings before deploying. Redeploy after changing environment variables.
-
-## Author
-
-**Mohammad Niazi**  
-Frontend Developer / Computer Engineering Student
-
-- GitHub: https://github.com/mmdmahdiniazi
+Set `VITE_SUPABASE_URL` and `VITE_SUPABASE_ANON_KEY` in Vercel project settings, then redeploy after environment changes.
 
 ## License
 
-No formal open-source license has been added yet. Unless a license is added to the repository, reuse and redistribution are not granted by an explicit open-source license.
+No formal open-source license has been added. Until a license is included, the repository does not grant an explicit open-source reuse or redistribution license.
