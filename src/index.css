@@ -1,48 +1,76 @@
+@import url("https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;600;700;800&display=swap");
 @import "tailwindcss";
 
 :root {
-  font-family: Vazirmatn, Tahoma, Arial, sans-serif;
-
-  color: #111827;
-  background: #f7f8fa;
+  font-family: "Vazirmatn", Tahoma, Arial, sans-serif;
+  color: #172b3a;
+  background: #f5f8fb;
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  --background: 210 40% 98%;
+  --foreground: 211 36% 18%;
+  --card: 0 0% 100%;
+  --card-foreground: 211 36% 18%;
+  --primary: 195 70% 29%;
+  --primary-foreground: 0 0% 100%;
+  --secondary: 204 35% 94%;
+  --secondary-foreground: 205 50% 26%;
+  --muted: 210 30% 96%;
+  --muted-foreground: 211 16% 48%;
+  --accent: 165 55% 93%;
+  --accent-foreground: 165 75% 25%;
+  --destructive: 0 72% 51%;
+  --border: 214 28% 88%;
+  --input: 214 28% 88%;
+  --ring: 193 70% 38%;
+  --radius: 1rem;
 }
-
-* {
-  box-sizing: border-box;
-}
-
-html {
-  min-width: 320px;
-  background: #f7f8fa;
-}
-
+* { box-sizing: border-box; }
+html { min-width: 320px; min-height: 100%; background: #f5f8fb; scroll-behavior: smooth; scrollbar-gutter: stable; }
 body {
-  min-width: 320px;
-  min-height: 100vh;
-  margin: 0;
-  background: #f7f8fa;
+  min-width: 320px; min-height: 100vh; margin: 0;
+  background: radial-gradient(ellipse at 12% 0%, rgba(13,148,136,.055), transparent 32rem), #f5f8fb;
+  color: #172b3a; font-family: "Vazirmatn", Tahoma, Arial, sans-serif;
+  font-feature-settings: "ss01" on;
 }
+button, input, textarea, select { font: inherit; outline-color: #0f8191; }
+button { cursor: pointer; -webkit-tap-highlight-color: transparent; }
+button:disabled { cursor: not-allowed; }
+::selection { background: #ccefe9; color: #123b45; }
+:focus-visible { outline: 3px solid rgba(13,148,136,.35); outline-offset: 2px; }
+#root { min-height: 100vh; }
 
-button,
-input,
-textarea,
-select {
-  font: inherit;
-}
-
-button {
-  cursor: pointer;
-}
-
-button:disabled {
-  cursor: not-allowed;
-}
-
-::selection {
-  background: #e5e7eb;
-  color: #111827;
+/* Shared visual language for the existing UI and shadcn-style design tokens. */
+.bg-\\[\\#f7f8fa\\] { background-color: #f5f8fb !important; }
+.bg-gray-900 { background-color: #123b4a !important; }
+.hover\\:bg-gray-800:hover { background-color: #0d303d !important; }
+.text-gray-950, .text-gray-900 { color: #172b3a !important; }
+.text-gray-800 { color: #263f4f !important; }
+.text-gray-700 { color: #365163 !important; }
+.text-gray-600 { color: #526a7a !important; }
+.text-gray-500 { color: #718493 !important; }
+.text-gray-400 { color: #8fa0ad !important; }
+.border-gray-200, .border-gray-200\\/80 { border-color: #dce5eb !important; }
+.border-gray-100 { border-color: #eaf0f4 !important; }
+.bg-gray-50 { background-color: #f6f9fb !important; }
+.bg-gray-100 { background-color: #edf3f6 !important; }
+.hover\\:bg-gray-50:hover { background-color: #f4f8fa !important; }
+.hover\\:bg-gray-100:hover { background-color: #eaf1f5 !important; }
+.focus\\:border-gray-400:focus { border-color: #6ba8b0 !important; }
+.focus\\:ring-gray-100:focus { --tw-ring-color: #dff0f0 !important; }
+.bg-blue-50 { background-color: #e8f5f8 !important; }
+.text-blue-700 { color: #176b7b !important; }
+.rounded-xl { border-radius: 1rem; }
+.rounded-2xl { border-radius: 1.25rem; }
+header.border-b { border-color: #e1eaf0; box-shadow: 0 1px 0 rgba(19,59,74,.02); }
+article.group { box-shadow: 0 2px 8px rgba(24,52,70,.025); }
+article.group:hover { box-shadow: 0 12px 30px rgba(24,52,70,.075); transform: translateY(-1px); }
+input, select, textarea { transition: border-color .18s ease, box-shadow .18s ease, background-color .18s ease; }
+input:focus, select:focus, textarea:focus { box-shadow: 0 0 0 4px rgba(13,148,136,.10); }
+button { transition: color .18s ease, background-color .18s ease, border-color .18s ease, box-shadow .18s ease, transform .18s ease; }
+button:active:not(:disabled) { transform: translateY(1px); }
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { scroll-behavior: auto !important; animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
 }
