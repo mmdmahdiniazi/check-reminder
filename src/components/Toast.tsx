@@ -1,23 +1,34 @@
 type ToastType = "success" | "error";
 
 type ToastProps = {
+  /** نوع پیام؛ رنگ و آیکون بر اساس آن تعیین می‌شود */
   type: ToastType;
   message: string;
   onClose: () => void;
+  /** مدت نمایش به میلی‌ثانیه؛ فقط برای نوار زمان‌سنج استفاده می‌شود (بستن خودکار در والد انجام می‌شود) */
+  duration?: number;
 };
 
-function Toast({ type, message, onClose }: ToastProps) {
+/**
+ * پیام کوتاه و موقتی (Toast) برای اطلاع‌رسانی نتیجه‌ی عملیات.
+ * - موفقیت: با role="status" اعلام می‌شود (مزاحم نیست)
+ * - خطا: با role="alert" بلافاصله به صفحه‌خوان‌ها اعلام می‌شود
+ * - نوار پایین کارت، زمان باقی‌مانده تا بسته‌شدن خودکار را نشان می‌دهد
+ */
+function Toast({ type, message, onClose, duration = 3000 }: ToastProps) {
   const isSuccess = type === "success";
 
   return (
+    // لایه‌ی بیرونی فقط جای‌گذاری می‌کند تا با انیمیشن ورود تداخل نکند
     <div className="fixed bottom-5 left-1/2 z-50 w-[calc(100%-2rem)] max-w-md -translate-x-1/2 sm:left-5 sm:right-auto sm:w-auto sm:translate-x-0">
       <div
-        role="status"
-        aria-live="polite"
-        className={`flex items-center gap-3 rounded-2xl border bg-white px-4 py-3.5 shadow-xl ${
+        role={isSuccess ? "status" : "alert"}
+        aria-live={isSuccess ? "polite" : "assertive"}
+        className={`animate-slide-up relative flex items-center gap-3 overflow-hidden rounded-2xl border bg-white px-4 py-3.5 shadow-xl ${
           isSuccess ? "border-green-100" : "border-red-100"
         }`}
       >
+        {/* آیکون وضعیت */}
         <div
           className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-xl ${
             isSuccess
@@ -58,6 +69,7 @@ function Toast({ type, message, onClose }: ToastProps) {
           )}
         </div>
 
+        {/* متن پیام */}
         <p
           className={`min-w-0 flex-1 text-sm font-medium ${
             isSuccess ? "text-green-800" : "text-red-800"
@@ -66,6 +78,7 @@ function Toast({ type, message, onClose }: ToastProps) {
           {message}
         </p>
 
+        {/* دکمه‌ی بستن دستی */}
         <button
           type="button"
           onClick={onClose}
@@ -74,6 +87,15 @@ function Toast({ type, message, onClose }: ToastProps) {
         >
           ×
         </button>
+
+        {/* نوار زمان‌سنج بسته‌شدن خودکار */}
+        <span
+          aria-hidden="true"
+          className={`animate-toast-progress absolute inset-x-0 bottom-0 h-0.5 origin-right ${
+            isSuccess ? "bg-green-400" : "bg-red-400"
+          }`}
+          style={{ animationDuration: `${duration}ms` }}
+        />
       </div>
     </div>
   );

@@ -1,48 +1,151 @@
 @import "tailwindcss";
 
-:root {
-  font-family: Vazirmatn, Tahoma, Arial, sans-serif;
+/* ==========================================================================
+   توکن‌های طراحی (Design Tokens)
+   همه‌ی رنگ‌ها، سایه‌ها و انیمیشن‌های مشترک اینجا تعریف می‌شوند تا تغییر
+   ظاهر پروژه فقط با ویرایش همین بخش انجام شود. Tailwind از روی این متغیرها،
+   کلاس‌هایی مثل `bg-brand-600`، `shadow-card` و `animate-slide-up` می‌سازد.
+   ========================================================================== */
+@theme {
+  /* فونت اصلی؛ اگر وزیرمتن بارگذاری نشد، فونت‌های سیستمی جایگزین می‌شوند */
+  --font-sans: "Vazirmatn", Tahoma, "Segoe UI", Arial, sans-serif;
 
-  color: #111827;
-  background: #f7f8fa;
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+  /* رنگ برند (ایندیگو) برای دکمه‌های اصلی، فوکوس و حالت‌های فعال */
+  --color-brand-50: #eef2ff;
+  --color-brand-100: #e0e7ff;
+  --color-brand-200: #c7d2fe;
+  --color-brand-500: #6366f1;
+  --color-brand-600: #4f46e5;
+  --color-brand-700: #4338ca;
+
+  /* سایه‌های ملایم برای کارت‌ها */
+  --shadow-card: 0 1px 2px rgb(16 24 40 / 0.04), 0 1px 3px rgb(16 24 40 / 0.06);
+  --shadow-card-hover:
+    0 8px 20px -6px rgb(16 24 40 / 0.12), 0 2px 6px -2px rgb(16 24 40 / 0.06);
+
+  /* انیمیشن‌های ورود (برای کارت‌ها، مودال، اعلان‌ها و Toast) */
+  --animate-fade-in: fade-in 180ms ease-out both;
+  --animate-slide-up: slide-up 280ms cubic-bezier(0.16, 1, 0.3, 1) both;
+  --animate-pop-in: pop-in 180ms cubic-bezier(0.16, 1, 0.3, 1) both;
+  --animate-toast-progress: toast-progress linear forwards;
+
+  @keyframes fade-in {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+
+  @keyframes slide-up {
+    from {
+      opacity: 0;
+      transform: translateY(14px);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+
+  @keyframes pop-in {
+    from {
+      opacity: 0;
+      transform: scale(0.96) translateY(-4px);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+
+  /* نوار زمان‌سنج Toast (از پر به خالی) */
+  @keyframes toast-progress {
+    from {
+      transform: scaleX(1);
+    }
+    to {
+      transform: scaleX(0);
+    }
+  }
 }
 
-* {
-  box-sizing: border-box;
+/* ==========================================================================
+   استایل‌های پایه
+   داخل @layer base قرار دارند تا کلاس‌های Tailwind همیشه اولویت بیشتری داشته
+   باشند (مثلاً `outline-none` روی input‌ها بتواند حلقه‌ی فوکوس پیش‌فرض را
+   خاموش کند).
+   ========================================================================== */
+@layer base {
+  :root {
+    color: #111827;
+    font-synthesis: none;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  * {
+    box-sizing: border-box;
+  }
+
+  html {
+    min-width: 320px;
+    background: #f6f7fb;
+    color-scheme: light;
+    scroll-behavior: smooth;
+  }
+
+  /* پس‌زمینه با یک درخشش ملایم برند در بالای صفحه */
+  body {
+    min-width: 320px;
+    min-height: 100vh;
+    margin: 0;
+    background:
+      radial-gradient(
+        900px 360px at 85% -80px,
+        rgb(99 102 241 / 0.1),
+        transparent 70%
+      ),
+      #f6f7fb;
+  }
+
+  button,
+  input,
+  textarea,
+  select {
+    font: inherit;
+  }
+
+  button {
+    cursor: pointer;
+  }
+
+  button:disabled {
+    cursor: not-allowed;
+  }
+
+  /* حلقه‌ی فوکوس واضح برای کاربران کیبورد (دسترس‌پذیری) */
+  :focus-visible {
+    outline: 2px solid var(--color-brand-500);
+    outline-offset: 2px;
+  }
+
+  ::selection {
+    background: var(--color-brand-100);
+    color: #111827;
+  }
 }
 
-html {
-  min-width: 320px;
-  background: #f7f8fa;
-}
-
-body {
-  min-width: 320px;
-  min-height: 100vh;
-  margin: 0;
-  background: #f7f8fa;
-}
-
-button,
-input,
-textarea,
-select {
-  font: inherit;
-}
-
-button {
-  cursor: pointer;
-}
-
-button:disabled {
-  cursor: not-allowed;
-}
-
-::selection {
-  background: #e5e7eb;
-  color: #111827;
+/* احترام به تنظیم «کاهش حرکت» سیستم‌عامل برای کاربرانی که انیمیشن را نمی‌خواهند */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }

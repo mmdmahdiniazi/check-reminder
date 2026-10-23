@@ -1,7 +1,11 @@
 import { useEffect, useRef, useState } from "react";
+
 import { supabase } from "../lib/supabase";
 
-type Notification = {
+import { formatNumber, formatRelativeTime } from "../utils/format";
+
+/** یک اعلان یادآوری (نام AppNotification برای جلوگیری از تداخل با نوع Notification مرورگر) */
+type AppNotification = {
   id: string;
   title: string;
   message: string;
@@ -9,33 +13,59 @@ type Notification = {
   created_at: string;
 };
 
+/**
+ * زنگ اعلان‌ها در هدر: تعداد اعلان‌های نخوانده را نشان می‌دهد و با کلیک،
+ * فهرست اعلان‌ها را در یک پنل باز می‌کند. کلیک روی هر اعلان آن را «خوانده» می‌کند.
+ */
 function NotificationBell() {
-  const [notifications, setNotifications] = useState<Notification[]>([]);
+  const [notifications, setNotifications] = useState<AppNotification[]>([]);
   const [isOpen, setIsOpen] = useState(false);
   const [isMarkingAll, setIsMarkingAll] = useState(false);
 
+  // فقط بار اول (تا رسیدن اولین پاسخ) اسکلت بارگذاری نشان داده می‌شود
+  const [isLoading, setIsLoading] = useState(true);
+  const [hasError, setHasError] = useState(false);
+
+  // با تغییر این عدد، فهرست اعلان‌ها دوباره از سرور گرفته می‌شود
+  const [reloadKey, setReloadKey] = useState(0);
+
   const containerRef = useRef<HTMLDivElement>(null);
 
-  const fetchNotifications = async () => {
-    const { data, error } = await supabase
-      .from("notifications")
-      .select("*")
-      .order("created_at", {
-        ascending: false,
-      });
-
-    if (error) {
-      console.error("Error fetching notifications:", error);
-      return;
-    }
-
-    setNotifications(data ?? []);
-  };
-
+  // دریافت اعلان‌ها هنگام mount، هنگام باز کردن پنل و هنگام «تلاش مجدد»
   useEffect(() => {
-    fetchNotifications();
-  }, []);
+    let isCancelled = false;
 
+    const loadNotifications = async () => {
+      const { data, error } = await supabase
+        .from("notifications")
+        .select("*")
+        .order("created_at", {
+          ascending: false,
+        });
+
+      // اگر کامپوننت در این فاصله unmount شده، نتیجه نادیده گرفته می‌شود
+      if (isCancelled) return;
+
+      if (error) {
+        console.error("Error fetching notifications:", error);
+        setHasError(true);
+        setIsLoading(false);
+        return;
+      }
+
+      setNotifications(data ?? []);
+      setHasError(false);
+      setIsLoading(false);
+    };
+
+    void loadNotifications();
+
+    return () => {
+      isCancelled = true;
+    };
+  }, [reloadKey]);
+
+  // بستن پنل با کلیک بیرون از آن یا زدن Escape
   useEffect(() => {
     if (!isOpen) return;
 
@@ -65,6 +95,18 @@ function NotificationBell() {
   const unreadCount = notifications.filter(
     (notification) => !notification.is_read,
   ).length;
+
+  const handleToggle = () => {
+    // هنگام باز کردن پنل، اعلان‌های تازه (مثلاً یادآوری‌هایی که همین الان ساخته شده‌اند) گرفته می‌شود
+    if (!isOpen) setReloadKey((prev) => prev + 1);
+
+    setIsOpen((prev) => !prev);
+  };
+
+  const handleRetry = () => {
+    setIsLoading(true);
+    setReloadKey((prev) => prev + 1);
+  };
 
   const handleMarkAsRead = async (id: string) => {
     const { error } = await supabase
@@ -124,15 +166,20 @@ function NotificationBell() {
 
   return (
     <div ref={containerRef} className="relative">
+      {/* دکمه‌ی زنگ همراه با نشانگر تعداد نخوانده‌ها */}
       <button
         type="button"
-        onClick={() => setIsOpen((prev) => !prev)}
+        onClick={handleToggle}
         className={`relative flex h-11 w-11 items-center justify-center rounded-xl border transition ${
           isOpen
-            ? "border-gray-300 bg-gray-100 text-gray-900"
+            ? "border-brand-200 bg-brand-50 text-brand-700"
             : "border-gray-200 bg-white text-gray-600 hover:bg-gray-50"
         }`}
-        aria-label="اعلان‌ها"
+        aria-label={
+          unreadCount > 0
+            ? `اعلان‌ها، ${formatNumber(unreadCount)} مورد خوانده‌نشده`
+            : "اعلان‌ها"
+        }
         aria-expanded={isOpen}
         aria-haspopup="true"
       >
@@ -153,14 +200,15 @@ function NotificationBell() {
         </svg>
 
         {unreadCount > 0 && (
-          <span className="absolute -right-1 -top-1 flex h-5 min-w-5 items-center justify-center rounded-full bg-red-500 px-1 text-[10px] font-bold text-white ring-2 ring-white">
-            {unreadCount > 9 ? "9+" : unreadCount}
+          <span className="animate-pop-in absolute -right-1 -top-1 flex h-5 min-w-5 items-center justify-center rounded-full bg-red-500 px-1 text-[10px] font-bold text-white ring-2 ring-white">
+            {unreadCount > 9 ? "9+" : formatNumber(unreadCount)}
           </span>
         )}
       </button>
 
+      {/* پنل اعلان‌ها: در موبایل تمام‌عرض، در دسکتاپ زیر دکمه */}
       {isOpen && (
-        <div className="fixed inset-x-4 top-20 z-50 overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-2xl sm:absolute sm:left-0 sm:right-auto sm:top-14 sm:w-[370px]">
+        <div className="animate-pop-in fixed inset-x-4 top-20 z-50 origin-top overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-2xl sm:absolute sm:left-0 sm:right-auto sm:top-14 sm:w-[370px]">
           <div className="flex items-center justify-between border-b border-gray-100 px-4 py-4">
             <div>
               <h3 className="text-sm font-bold text-gray-950">اعلان‌ها</h3>
@@ -168,7 +216,7 @@ function NotificationBell() {
               <p className="mt-1 text-xs text-gray-400">
                 {unreadCount === 0
                   ? "همه اعلان‌ها خوانده شده‌اند"
-                  : `${unreadCount} اعلان خوانده نشده`}
+                  : `${formatNumber(unreadCount)} اعلان خوانده نشده`}
               </p>
             </div>
 
@@ -177,7 +225,7 @@ function NotificationBell() {
                 type="button"
                 onClick={handleMarkAllAsRead}
                 disabled={isMarkingAll}
-                className="rounded-lg px-3 py-2 text-xs font-medium text-gray-500 transition hover:bg-gray-100 hover:text-gray-900 disabled:cursor-not-allowed disabled:opacity-50"
+                className="rounded-lg px-3 py-2 text-xs font-medium text-brand-600 transition hover:bg-brand-50 disabled:cursor-not-allowed disabled:opacity-50"
               >
                 {isMarkingAll ? "در حال انجام..." : "خواندن همه"}
               </button>
@@ -185,7 +233,37 @@ function NotificationBell() {
           </div>
 
           <div className="max-h-[60vh] overflow-y-auto sm:max-h-[420px]">
-            {notifications.length === 0 ? (
+            {isLoading && notifications.length === 0 ? (
+              // اسکلت بارگذاری اولیه
+              <div className="space-y-4 px-4 py-5" aria-busy="true">
+                {[0, 1, 2].map((item) => (
+                  <div key={item} className="flex animate-pulse gap-3">
+                    <span className="mt-1.5 h-2.5 w-2.5 shrink-0 rounded-full bg-gray-200" />
+
+                    <div className="flex-1 space-y-2">
+                      <div className="h-3 w-1/2 rounded bg-gray-200" />
+                      <div className="h-3 w-full rounded bg-gray-100" />
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : hasError && notifications.length === 0 ? (
+              // خطا در دریافت اعلان‌ها
+              <div className="px-4 py-12 text-center">
+                <p className="text-sm font-medium text-gray-700">
+                  دریافت اعلان‌ها با خطا مواجه شد
+                </p>
+
+                <button
+                  type="button"
+                  onClick={handleRetry}
+                  className="mt-3 rounded-lg px-3 py-2 text-xs font-semibold text-brand-600 transition hover:bg-brand-50"
+                >
+                  تلاش مجدد
+                </button>
+              </div>
+            ) : notifications.length === 0 ? (
+              // هنوز اعلانی وجود ندارد
               <div className="px-4 py-12 text-center">
                 <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-2xl bg-gray-100 text-gray-400">
                   <svg
@@ -213,13 +291,14 @@ function NotificationBell() {
                 </p>
               </div>
             ) : (
+              // فهرست اعلان‌ها؛ اعلان‌های نخوانده پس‌زمینه‌ی رنگی و نقطه‌ی قرمز دارند
               notifications.map((notification) => (
                 <button
                   key={notification.id}
                   type="button"
                   onClick={() => handleMarkAsRead(notification.id)}
                   className={`block w-full border-b border-gray-100 px-4 py-4 text-right transition last:border-b-0 hover:bg-gray-50 ${
-                    notification.is_read ? "bg-white" : "bg-gray-50/80"
+                    notification.is_read ? "bg-white" : "bg-brand-50/50"
                   }`}
                 >
                   <div className="flex gap-3">
@@ -227,6 +306,7 @@ function NotificationBell() {
                       className={`mt-1.5 h-2.5 w-2.5 shrink-0 rounded-full ${
                         notification.is_read ? "bg-gray-300" : "bg-red-500"
                       }`}
+                      aria-hidden="true"
                     />
 
                     <div className="min-w-0 flex-1">
@@ -250,6 +330,16 @@ function NotificationBell() {
 
                       <p className="mt-1 text-xs leading-6 text-gray-500">
                         {notification.message}
+                      </p>
+
+                      {/* زمان نسبی؛ تاریخ کامل در tooltip */}
+                      <p
+                        className="mt-1.5 text-[11px] text-gray-400"
+                        title={new Date(notification.created_at).toLocaleString(
+                          "fa-IR",
+                        )}
+                      >
+                        {formatRelativeTime(notification.created_at)}
                       </p>
                     </div>
                   </div>
