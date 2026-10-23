@@ -5,6 +5,8 @@ import AdminPanel from "./components/AdminPanel";
 import CheckModal from "./components/CheckModal";
 import NotificationBell from "./components/NotificationBell";
 import Toast from "./components/Toast";
+import { Button } from "./components/ui/button";
+import { Input } from "./components/ui/input";
 
 import type { Check } from "./types/check";
 
@@ -399,7 +401,7 @@ function App() {
   return (
     <div className="min-h-screen bg-[#f5f8fb] text-gray-900" dir="rtl">
       <header className="border-b border-gray-200/80 bg-white/90 backdrop-blur">
-        <div className="mx-auto flex max-w-6xl items-center justify-between gap-2 px-3 py-3 sm:gap-4 sm:px-6 sm:py-4 lg:px-8">
+        <div className="mx-auto flex max-w-7xl items-center justify-between gap-2 px-3 py-3 sm:gap-4 sm:px-6 sm:py-4 lg:px-8">
           <div className="flex min-w-0 flex-1 items-center gap-2">
             <div className="flex min-w-0 items-center gap-2">
               <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-teal-700 to-cyan-800 text-sm font-extrabold text-white shadow-md shadow-teal-900/15">
@@ -488,7 +490,7 @@ function App() {
       </header>
 
       <main className="mx-auto max-w-7xl px-4 py-6 sm:px-6 sm:py-8 lg:px-8">
-        <section className="mb-6 flex flex-col gap-4 sm:mb-8 sm:flex-row sm:items-end sm:justify-between">
+        <section className="mb-6 flex flex-col gap-4 rounded-3xl border border-white/80 bg-gradient-to-l from-white via-white to-teal-50/70 p-5 shadow-sm shadow-slate-900/[0.025] sm:mb-8 sm:flex-row sm:items-end sm:justify-between sm:p-7">
           <div>
             <p className="mb-2 text-sm font-medium text-gray-500">
               نمای کلی حساب
@@ -557,7 +559,7 @@ function App() {
             <p className="mt-1 text-xs text-gray-400">چک ثبت‌شده</p>
           </div>
 
-          <div className="rounded-2xl border border-gray-200/80 bg-white p-5">
+          <div className="rounded-2xl border border-gray-200/80 bg-white p-5 shadow-sm shadow-slate-900/[0.025] transition duration-200 hover:-translate-y-0.5 hover:shadow-md">
             <div className="flex items-center justify-between gap-3">
               <p className="text-sm text-gray-500">نزدیک‌ترین سررسید</p>
 
@@ -620,7 +622,7 @@ function App() {
         </section>
 
         <section className="mt-9 sm:mt-12">
-          <div className="mb-4 flex flex-col gap-3 rounded-2xl border border-gray-200/80 bg-white p-4 shadow-sm sm:mb-5 sm:flex-row sm:items-end sm:justify-between sm:p-5">
+          <div className="mb-4 flex flex-col gap-3 rounded-2xl border border-gray-200/80 bg-white p-4 shadow-sm shadow-slate-900/[0.025] sm:mb-5 sm:flex-row sm:items-end sm:justify-between sm:p-5">
             <div>
               <h2 className="text-lg font-bold text-gray-950">
                 چک‌های دریافتی
@@ -640,7 +642,7 @@ function App() {
                 onChange={(event) => setSearchQuery(event.target.value)}
                 placeholder="جستجوی نام، شماره صیادی یا موبایل"
                 aria-label="جستجوی چک"
-                className="min-h-12 w-full rounded-xl border border-gray-200 bg-white px-10 py-3 text-base text-gray-900 outline-none transition placeholder:text-gray-400 focus:border-gray-400 focus:ring-4 focus:ring-gray-100 sm:text-sm"
+                className="h-12 w-full rounded-xl border-gray-200 bg-white px-10 text-base sm:text-sm"
               />
 
               <span
