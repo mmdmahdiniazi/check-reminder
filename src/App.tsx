@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 
 import CheckCard from "./components/CheckCard";
+import AdminPanel from "./components/AdminPanel";
 import CheckModal from "./components/CheckModal";
 import NotificationBell from "./components/NotificationBell";
 import Toast from "./components/Toast";
@@ -38,6 +39,7 @@ const planLabels: Record<UserPlan, string> = {
 
 function App() {
   const [checks, setChecks] = useState<Check[]>([]);
+  const [showAdminPanel, setShowAdminPanel] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
 
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -347,6 +349,10 @@ function App() {
     }
   };
 
+  if (showAdminPanel && profile && profile.role !== "user") {
+    return <AdminPanel currentRole={profile.role} onBack={() => setShowAdminPanel(false)} />;
+  }
+
   return (
     <div className="min-h-screen bg-[#f7f8fa] text-gray-900" dir="rtl">
       <header className="border-b border-gray-200/80 bg-white/90 backdrop-blur">
@@ -401,6 +407,15 @@ function App() {
           </div>
 
           <div className="flex shrink-0 items-center gap-1.5 sm:gap-2">
+            {profile && profile.role !== "user" && (
+              <button
+                type="button"
+                onClick={() => setShowAdminPanel(true)}
+                className="inline-flex min-h-11 items-center justify-center rounded-xl border border-gray-200 bg-white px-3 py-2.5 text-sm font-medium text-gray-700 transition hover:bg-gray-50"
+              >
+                پنل مدیریت
+              </button>
+            )}
             <NotificationBell />
 
             <button
