@@ -53,6 +53,8 @@ export default function AdminPanel({ currentRole, onBack }: AdminPanelProps) {
   }, []);
 
   useEffect(() => {
+    // Load the user list when the admin panel mounts.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     void loadUsers();
   }, [loadUsers]);
 
