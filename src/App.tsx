@@ -129,12 +129,29 @@ function App() {
   };
 
   useEffect(() => {
-    // Initial async data loads are intentionally started when the dashboard mounts.
-    // eslint-disable-next-line react-hooks/set-state-in-effect
-    void fetchChecks();
-    // eslint-disable-next-line react-hooks/immutability, react-hooks/set-state-in-effect
+    fetchChecks();
+
+    let active = true;
+    const fetchProfile = async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return;
+      const { data, error } = await supabase
+        .from("profiles")
+        .select("role")
+        .eq("id", user.id)
+        .maybeSingle();
+      if (error) {
+        console.error("Error fetching profile role:", error);
+        return;
+      }
+      if (active && data?.role && ["user", "admin", "super_admin"].includes(data.role)) {
+        setCurrentRole(data.role as "user" | "admin" | "super_admin");
+      }
+    };
     void fetchProfile();
+    return () => { active = false; };
   }, []);
+
 
   useEffect(() => {
     if (!toast) return;
@@ -147,6 +164,10 @@ function App() {
       window.clearTimeout(timer);
     };
   }, [toast]);
+
+  if (showAdminPanel && currentRole !== "user") {
+    return <AdminPanel currentRole={currentRole} onBack={() => setShowAdminPanel(false)} />;
+  }
 
   const handleSaveCheck = async (check: Check) => {
     if (isSaving) return;
