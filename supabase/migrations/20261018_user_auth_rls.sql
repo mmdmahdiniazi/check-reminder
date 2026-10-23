@@ -1,5 +1,5 @@
 -- Check Reminder: per-user data isolation
--- Run in Supabase SQL Editor after deploying phone OTP auth.
+-- Apply after enabling the email/password auth flow used by src/AuthGate.tsx.
 -- Existing rows are kept. Rows with user_id NULL are inaccessible until assigned below.
 
 alter table public.checks
@@ -56,7 +56,7 @@ create policy "Users can delete notifications for their checks" on public.notifi
   );
 
 -- Preserve access to existing checks:
--- 1. Sign in once with your phone number.
+-- 1. Sign in once using the configured email/password auth flow.
 -- 2. Copy that user's UUID from Supabase Dashboard > Authentication > Users.
 -- 3. If all current checks belong to that account, run once (replace UUID):
 -- update public.checks set user_id = 'YOUR_USER_UUID' where user_id is null;

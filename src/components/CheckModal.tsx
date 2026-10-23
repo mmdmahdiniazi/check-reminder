@@ -46,6 +46,8 @@ function CheckModal({
 
   useEffect(() => {
     if (check) {
+      // Synchronize the controlled form with the selected check.
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setFormData({
         ownerName: check.ownerName,
         mobile: check.mobile,
