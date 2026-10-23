@@ -129,26 +129,45 @@ function App() {
   };
 
   useEffect(() => {
-    fetchChecks();
+    // Load the dashboard data and the authenticated user's role/plan.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    void fetchChecks();
 
     let active = true;
-    const fetchProfile = async () => {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) return;
-      const { data, error } = await supabase
-        .from("profiles")
-        .select("role")
-        .eq("id", user.id)
-        .maybeSingle();
-      if (error) {
-        console.error("Error fetching profile role:", error);
-        return;
-      }
-      if (active && data?.role && ["user", "admin", "super_admin"].includes(data.role)) {
-        setCurrentRole(data.role as "user" | "admin" | "super_admin");
+    const loadProfile = async () => {
+      setIsProfileLoading(true);
+      setProfileError("");
+      try {
+        const { data: { user }, error: userError } = await supabase.auth.getUser();
+        if (userError || !user) throw new Error("اطلاعات کاربر واردشده دریافت نشد.");
+
+        const { data, error } = await supabase
+          .from("profiles")
+          .select("role, plan")
+          .eq("id", user.id)
+          .single();
+        if (error) throw error;
+
+        const validRoles: UserRole[] = ["user", "admin", "super_admin"];
+        const validPlans: UserPlan[] = ["free", "pro", "enterprise"];
+        if (!validRoles.includes(data.role as UserRole) || !validPlans.includes(data.plan as UserPlan)) {
+          throw new Error("نقش یا پلن حساب معتبر نیست.");
+        }
+        if (active) {
+          setProfile({ role: data.role as UserRole, plan: data.plan as UserPlan });
+        }
+      } catch (error) {
+        console.error("Error fetching profile:", error);
+        if (active) {
+          setProfile(null);
+          setProfileError("دریافت اطلاعات حساب با خطا مواجه شد.");
+        }
+      } finally {
+        if (active) setIsProfileLoading(false);
       }
     };
-    void fetchProfile();
+
+    void loadProfile();
     return () => { active = false; };
   }, []);
 
@@ -165,8 +184,8 @@ function App() {
     };
   }, [toast]);
 
-  if (showAdminPanel && currentRole !== "user") {
-    return <AdminPanel currentRole={currentRole} onBack={() => setShowAdminPanel(false)} />;
+  if (showAdminPanel && profile && profile.role !== "user") {
+    return <AdminPanel currentRole={profile.role} onBack={() => setShowAdminPanel(false)} />;
   }
 
   const handleSaveCheck = async (check: Check) => {
