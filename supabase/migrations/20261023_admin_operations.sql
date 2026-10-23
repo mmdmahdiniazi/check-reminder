@@ -47,7 +47,7 @@ begin
   if current_role not in ('admin', 'super_admin') or current_role is null then
     raise exception 'Access denied';
   end if;
-  if new_plan not in ('free', 'pro', 'enterprise') then
+  if new_plan is null or new_plan not in ('free', 'pro', 'enterprise') then
     raise exception 'Invalid plan';
   end if;
   update public.profiles set plan = new_plan where id = target_user_id;
@@ -66,7 +66,8 @@ declare
 begin
   select p.role into current_role from public.profiles p where p.id = auth.uid();
   if current_role is distinct from 'super_admin' then raise exception 'Access denied'; end if;
-  if new_role not in ('user', 'admin', 'super_admin') then raise exception 'Invalid role'; end if;
+  if new_role is null or new_role not in ('user', 'admin', 'super_admin') then raise exception 'Invalid role'; end if;
+  if target_user_id is null then raise exception 'Target user is required'; end if;
   if target_user_id = auth.uid() then raise exception 'Cannot change your own role'; end if;
   update public.profiles set role = new_role where id = target_user_id;
   if not found then raise exception 'User profile not found'; end if;
