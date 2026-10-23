@@ -162,8 +162,8 @@ function NotificationBell() {
       </button>
 
       {isOpen && (
-        <div className="fixed inset-x-4 top-20 z-50 overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-2xl sm:absolute sm:left-0 sm:right-auto sm:top-14 sm:w-[370px]">
-          <div className="flex items-center justify-between border-b border-gray-100 px-4 py-4">
+        <div className="fixed inset-x-3 top-20 z-50 overflow-hidden rounded-2xl border border-gray-200/90 bg-white shadow-2xl shadow-slate-950/15 sm:absolute sm:left-0 sm:right-auto sm:top-14 sm:w-[380px]">
+          <div className="flex items-center justify-between border-b border-gray-100 bg-slate-50/80 px-4 py-4">
             <div>
               <h3 className="text-sm font-bold text-gray-950">اعلان‌ها</h3>
 
@@ -227,7 +227,7 @@ function NotificationBell() {
                   <div className="flex gap-3">
                     <span
                       className={`mt-1.5 h-2.5 w-2.5 shrink-0 rounded-full ${
-                        notification.is_read ? "bg-gray-300" : "bg-red-500"
+                        notification.is_read ? "bg-gray-300" : "bg-teal-600"
                       }`}
                     />
 
@@ -244,7 +244,7 @@ function NotificationBell() {
                         </p>
 
                         {!notification.is_read && (
-                          <span className="shrink-0 rounded-full bg-red-50 px-2 py-0.5 text-[10px] font-medium text-red-600">
+                          <span className="shrink-0 rounded-full bg-teal-50 px-2 py-0.5 text-[10px] font-semibold text-teal-700">
                             جدید
                           </span>
                         )}
