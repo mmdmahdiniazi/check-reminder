@@ -129,26 +129,45 @@ function App() {
   };
 
   useEffect(() => {
-    fetchChecks();
+    // Load the dashboard data and the authenticated user's role/plan.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    void fetchChecks();
 
     let active = true;
-    const fetchProfile = async () => {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) return;
-      const { data, error } = await supabase
-        .from("profiles")
-        .select("role")
-        .eq("id", user.id)
-        .maybeSingle();
-      if (error) {
-        console.error("Error fetching profile role:", error);
-        return;
-      }
-      if (active && data?.role && ["user", "admin", "super_admin"].includes(data.role)) {
-        setCurrentRole(data.role as "user" | "admin" | "super_admin");
+    const loadProfile = async () => {
+      setIsProfileLoading(true);
+      setProfileError("");
+      try {
+        const { data: { user }, error: userError } = await supabase.auth.getUser();
+        if (userError || !user) throw new Error("اطلاعات کاربر واردشده دریافت نشد.");
+
+        const { data, error } = await supabase
+          .from("profiles")
+          .select("role, plan")
+          .eq("id", user.id)
+          .single();
+        if (error) throw error;
+
+        const validRoles: UserRole[] = ["user", "admin", "super_admin"];
+        const validPlans: UserPlan[] = ["free", "pro", "enterprise"];
+        if (!validRoles.includes(data.role as UserRole) || !validPlans.includes(data.plan as UserPlan)) {
+          throw new Error("نقش یا پلن حساب معتبر نیست.");
+        }
+        if (active) {
+          setProfile({ role: data.role as UserRole, plan: data.plan as UserPlan });
+        }
+      } catch (error) {
+        console.error("Error fetching profile:", error);
+        if (active) {
+          setProfile(null);
+          setProfileError("دریافت اطلاعات حساب با خطا مواجه شد.");
+        }
+      } finally {
+        if (active) setIsProfileLoading(false);
       }
     };
-    void fetchProfile();
+
+    void loadProfile();
     return () => { active = false; };
   }, []);
 
@@ -165,8 +184,8 @@ function App() {
     };
   }, [toast]);
 
-  if (showAdminPanel && currentRole !== "user") {
-    return <AdminPanel currentRole={currentRole} onBack={() => setShowAdminPanel(false)} />;
+  if (showAdminPanel && profile && profile.role !== "user") {
+    return <AdminPanel currentRole={profile.role} onBack={() => setShowAdminPanel(false)} />;
   }
 
   const handleSaveCheck = async (check: Check) => {
@@ -378,12 +397,12 @@ function App() {
   }
 
   return (
-    <div className="min-h-screen bg-[#f7f8fa] text-gray-900" dir="rtl">
+    <div className="min-h-screen bg-[#f5f8fb] text-gray-900" dir="rtl">
       <header className="border-b border-gray-200/80 bg-white/90 backdrop-blur">
         <div className="mx-auto flex max-w-6xl items-center justify-between gap-2 px-3 py-3 sm:gap-4 sm:px-6 sm:py-4 lg:px-8">
           <div className="flex min-w-0 flex-1 items-center gap-2">
             <div className="flex min-w-0 items-center gap-2">
-              <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-gray-900 text-sm font-bold text-white">
+              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-teal-700 to-cyan-800 text-sm font-extrabold text-white shadow-md shadow-teal-900/15">
                 چ
               </div>
 
@@ -468,7 +487,7 @@ function App() {
         </div>
       </header>
 
-      <main className="mx-auto max-w-6xl px-4 py-6 sm:px-6 sm:py-8 lg:px-8">
+      <main className="mx-auto max-w-7xl px-4 py-6 sm:px-6 sm:py-8 lg:px-8">
         <section className="mb-6 flex flex-col gap-4 sm:mb-8 sm:flex-row sm:items-end sm:justify-between">
           <div>
             <p className="mb-2 text-sm font-medium text-gray-500">
@@ -508,8 +527,8 @@ function App() {
           </div>
         )}
 
-        <section className="grid grid-cols-1 gap-3 sm:grid-cols-3">
-          <div className="rounded-2xl border border-gray-200/80 bg-white p-5">
+        <section className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+          <div className="rounded-2xl border border-gray-200/80 bg-white p-5 shadow-sm shadow-slate-900/[0.025] transition duration-200 hover:-translate-y-0.5 hover:shadow-md">
             <div className="flex items-center justify-between gap-3">
               <p className="text-sm text-gray-500">کل چک‌ها</p>
 
@@ -600,8 +619,8 @@ function App() {
           </div>
         </section>
 
-        <section className="mt-8 sm:mt-10">
-          <div className="mb-4 flex flex-col gap-3 sm:mb-5 sm:flex-row sm:items-end sm:justify-between">
+        <section className="mt-9 sm:mt-12">
+          <div className="mb-4 flex flex-col gap-3 rounded-2xl border border-gray-200/80 bg-white p-4 shadow-sm sm:mb-5 sm:flex-row sm:items-end sm:justify-between sm:p-5">
             <div>
               <h2 className="text-lg font-bold text-gray-950">
                 چک‌های دریافتی

@@ -105,7 +105,7 @@ function CheckCard({
   };
 
   return (
-    <article className="group rounded-2xl border border-gray-200/80 bg-white p-4 transition duration-200 hover:border-gray-300 hover:shadow-sm sm:p-5">
+    <article className="group rounded-2xl border border-gray-200/80 bg-white p-4 transition duration-200 hover:border-teal-200 hover:shadow-lg hover:shadow-teal-950/[0.04] sm:p-5">
       <div className="flex items-start justify-between gap-4">
         <div className="min-w-0">
           <div className="flex items-center gap-2">
@@ -132,7 +132,7 @@ function CheckCard({
       </div>
 
       <div
-        className={`mt-5 rounded-xl border p-4 ${status.bg} ${status.border}`}
+        className={`mt-5 rounded-2xl border p-4 ${status.bg} ${status.border}`}
       >
         <div className="flex items-center justify-between gap-3">
           <div>
@@ -224,7 +224,7 @@ function CheckCard({
             type="button"
             onClick={() => onEdit(check)}
             disabled={isDeleting}
-            className="min-h-11 flex-1 rounded-xl border border-gray-200 bg-white px-4 py-2.5 text-sm font-semibold text-gray-700 transition hover:border-gray-300 hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50 sm:flex-none"
+            className="min-h-11 flex-1 rounded-xl border border-teal-100 bg-teal-50/50 px-4 py-2.5 text-sm font-semibold text-teal-800 transition hover:border-teal-200 hover:bg-teal-50 disabled:cursor-not-allowed disabled:opacity-50 sm:flex-none"
           >
             ویرایش
           </button>
