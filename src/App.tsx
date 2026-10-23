@@ -128,9 +128,6 @@ function App() {
     return () => { active = false; };
   }, []);
 
-  if (showAdminPanel && currentRole !== "user") {
-    return <AdminPanel currentRole={currentRole} onBack={() => setShowAdminPanel(false)} />;
-  }
 
   useEffect(() => {
     if (!toast) return;
@@ -143,6 +140,10 @@ function App() {
       window.clearTimeout(timer);
     };
   }, [toast]);
+
+  if (showAdminPanel && currentRole !== "user") {
+    return <AdminPanel currentRole={currentRole} onBack={() => setShowAdminPanel(false)} />;
+  }
 
   const handleSaveCheck = async (check: Check) => {
     if (isSaving) return;
