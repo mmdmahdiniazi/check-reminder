@@ -20,7 +20,7 @@ type FormErrors = {
 };
 
 const inputBaseClass =
-  "w-full rounded-xl border bg-white px-3.5 py-3 text-sm text-gray-900 outline-none transition placeholder:text-gray-400 focus:border-gray-400 focus:ring-4 focus:ring-gray-100";
+  "w-full rounded-xl border bg-white px-3.5 py-3 text-sm text-gray-900 shadow-sm outline-none transition placeholder:text-gray-400 focus:border-teal-600 focus:ring-4 focus:ring-teal-600/10";
 
 const labelClass = "mb-2 block text-sm font-medium text-gray-700";
 
@@ -215,18 +215,18 @@ function CheckModal({
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-end justify-center bg-gray-950/45 p-0 backdrop-blur-[2px] sm:items-center sm:p-4"
+      className="fixed inset-0 z-50 flex items-end justify-center bg-slate-950/50 p-0 backdrop-blur-sm sm:items-center sm:p-4"
       onMouseDown={() => {
         if (!isSaving) onClose();
       }}
     >
       <div
-        className="flex max-h-[94dvh] w-full flex-col overflow-hidden rounded-t-3xl bg-white shadow-2xl sm:max-h-[88vh] sm:max-w-xl sm:rounded-3xl"
+        className="flex max-h-[94dvh] w-full flex-col overflow-hidden rounded-t-3xl border border-white/80 bg-white shadow-2xl shadow-slate-950/20 sm:max-h-[88vh] sm:max-w-xl sm:rounded-3xl"
         onMouseDown={(event) => event.stopPropagation()}
       >
         <div className="flex shrink-0 items-center justify-between border-b border-gray-100 px-5 py-4 sm:px-6">
           <div className="flex min-w-0 items-center gap-3">
-            <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-gray-100 text-gray-700">
+            <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-teal-50 text-teal-800">
               <svg
                 viewBox="0 0 24 24"
                 fill="none"
@@ -267,7 +267,7 @@ function CheckModal({
           noValidate
           className="flex min-h-0 flex-1 flex-col"
         >
-          <div className="min-h-0 flex-1 space-y-5 overflow-y-auto px-5 py-5 sm:px-6">
+          <div className="min-h-0 flex-1 space-y-5 overflow-y-auto bg-slate-50/50 px-5 py-5 sm:px-6">
             <div>
               <label htmlFor="ownerName" className={labelClass}>
                 نام صاحب چک
