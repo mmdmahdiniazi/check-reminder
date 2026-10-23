@@ -129,7 +129,10 @@ function App() {
   };
 
   useEffect(() => {
+    // Initial async data loads are intentionally started when the dashboard mounts.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     void fetchChecks();
+    // eslint-disable-next-line react-hooks/immutability, react-hooks/set-state-in-effect
     void fetchProfile();
   }, []);
 
