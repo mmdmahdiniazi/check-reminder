@@ -16,9 +16,29 @@ import {
   getReminderType,
 } from "./utils/date";
 
+type UserRole = "user" | "admin" | "super_admin";
+
+type UserPlan = "free" | "pro" | "enterprise";
+
+type UserProfile = {
+  role: UserRole;
+  plan: UserPlan;
+};
+
+const roleLabels: Record<UserRole, string> = {
+  user: "کاربر",
+  admin: "مدیر",
+  super_admin: "مدیر کل",
+};
+
+const planLabels: Record<UserPlan, string> = {
+  free: "رایگان",
+  pro: "حرفه‌ای",
+  enterprise: "سازمانی",
+};
+
 function App() {
   const [checks, setChecks] = useState<Check[]>([]);
-  const [currentRole, setCurrentRole] = useState<"user" | "admin" | "super_admin">("user");
   const [showAdminPanel, setShowAdminPanel] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
 
@@ -35,6 +55,10 @@ function App() {
     type: "success" | "error";
     message: string;
   } | null>(null);
+
+  const [profile, setProfile] = useState<UserProfile | null>(null);
+  const [isProfileLoading, setIsProfileLoading] = useState(true);
+  const [profileError, setProfileError] = useState("");
 
   const showToast = (type: "success" | "error", message: string) => {
     setToast({
@@ -301,6 +325,58 @@ function App() {
 
   const isSearching = searchQuery.trim().length > 0;
 
+  const fetchProfile = async () => {
+    setIsProfileLoading(true);
+    setProfileError("");
+
+    try {
+      const {
+        data: { user },
+        error: userError,
+      } = await supabase.auth.getUser();
+
+      if (userError || !user) {
+        throw new Error("اطلاعات کاربر واردشده دریافت نشد.");
+      }
+
+      const { data, error } = await supabase
+        .from("profiles")
+        .select("role, plan")
+        .eq("id", user.id)
+        .single();
+
+      if (error) {
+        throw error;
+      }
+
+      const validRoles: UserRole[] = ["user", "admin", "super_admin"];
+
+      const validPlans: UserPlan[] = ["free", "pro", "enterprise"];
+
+      if (
+        !validRoles.includes(data.role as UserRole) ||
+        !validPlans.includes(data.plan as UserPlan)
+      ) {
+        throw new Error("نقش یا پلن حساب معتبر نیست.");
+      }
+
+      setProfile({
+        role: data.role as UserRole,
+        plan: data.plan as UserPlan,
+      });
+    } catch (error) {
+      console.error("Error fetching profile:", error);
+      setProfile(null);
+      setProfileError("دریافت اطلاعات حساب با خطا مواجه شد.");
+    } finally {
+      setIsProfileLoading(false);
+    }
+  };
+
+  if (showAdminPanel && profile && profile.role !== "user") {
+    return <AdminPanel currentRole={profile.role} onBack={() => setShowAdminPanel(false)} />;
+  }
+
   return (
     <div className="min-h-screen bg-[#f7f8fa] text-gray-900" dir="rtl">
       <header className="border-b border-gray-200/80 bg-white/90 backdrop-blur">
@@ -319,18 +395,49 @@ function App() {
                 <p className="mt-0.5 hidden text-xs text-gray-500 sm:block">
                   پیگیری ساده و منظم سررسید چک‌ها
                 </p>
+                <div className="mt-2 flex flex-wrap items-center gap-2">
+                  {isProfileLoading ? (
+                    <span className="text-xs text-gray-400">
+                      در حال دریافت اطلاعات حساب...
+                    </span>
+                  ) : profile ? (
+                    <>
+                      <span className="rounded-lg bg-gray-100 px-2.5 py-1 text-xs font-medium text-gray-700">
+                        {roleLabels[profile.role]}
+                      </span>
+
+                      <span className="rounded-lg bg-blue-50 px-2.5 py-1 text-xs font-medium text-blue-700">
+                        پلن {planLabels[profile.plan]}
+                      </span>
+                    </>
+                  ) : (
+                    <div className="flex flex-wrap items-center gap-2">
+                      <span className="text-xs text-red-600">
+                        {profileError}
+                      </span>
+
+                      <button
+                        type="button"
+                        onClick={() => void fetchProfile()}
+                        className="text-xs font-semibold text-gray-700 underline underline-offset-4"
+                      >
+                        تلاش مجدد
+                      </button>
+                    </div>
+                  )}
+                </div>
               </div>
             </div>
           </div>
 
           <div className="flex shrink-0 items-center gap-1.5 sm:gap-2">
-            {currentRole !== "user" && (
+            {profile && profile.role !== "user" && (
               <button
                 type="button"
                 onClick={() => setShowAdminPanel(true)}
-                className="inline-flex min-h-11 items-center justify-center rounded-xl border border-gray-200 bg-white px-3 py-2.5 text-sm font-medium text-gray-600 transition hover:bg-gray-50"
+                className="inline-flex min-h-11 items-center justify-center rounded-xl border border-gray-200 bg-white px-3 py-2.5 text-sm font-medium text-gray-700 transition hover:bg-gray-50"
               >
-                مدیریت کاربران
+                پنل مدیریت
               </button>
             )}
             <NotificationBell />

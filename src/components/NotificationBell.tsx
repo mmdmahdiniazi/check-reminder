@@ -33,6 +33,8 @@ function NotificationBell() {
   };
 
   useEffect(() => {
+    // Load notifications when the bell mounts.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     fetchNotifications();
   }, []);
 
