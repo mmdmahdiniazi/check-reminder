@@ -2,12 +2,19 @@ name: Validate application
 
 on:
   pull_request:
-    branches: [feature/user-roles-and-plans]
+    branches:
+      - main
+      - feature/user-roles-and-plans
   push:
-    branches: [feature/admin-panel]
+    branches:
+      - main
+      - feature/user-roles-and-plans
+
+permissions:
+  contents: read
 
 jobs:
-  build:
+  build-and-lint:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -17,3 +24,4 @@ jobs:
           cache: npm
       - run: npm ci
       - run: npm run build
+      - run: npm run lint
