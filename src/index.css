@@ -1,6 +1,28 @@
 @import url("https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;600;700;800&display=swap");
 @import "tailwindcss";
 
+@theme inline {
+  --font-sans: "Vazirmatn", Tahoma, Arial, sans-serif;
+  --color-background: hsl(var(--background));
+  --color-foreground: hsl(var(--foreground));
+  --color-card: hsl(var(--card));
+  --color-card-foreground: hsl(var(--card-foreground));
+  --color-primary: hsl(var(--primary));
+  --color-primary-foreground: hsl(var(--primary-foreground));
+  --color-secondary: hsl(var(--secondary));
+  --color-secondary-foreground: hsl(var(--secondary-foreground));
+  --color-muted: hsl(var(--muted));
+  --color-muted-foreground: hsl(var(--muted-foreground));
+  --color-accent: hsl(var(--accent));
+  --color-accent-foreground: hsl(var(--accent-foreground));
+  --color-destructive: hsl(var(--destructive));
+  --color-border: hsl(var(--border));
+  --color-input: hsl(var(--input));
+  --color-ring: hsl(var(--ring));
+  --radius-xl: var(--radius);
+  --radius-2xl: calc(var(--radius) + 4px);
+}
+
 :root {
   font-family: "Vazirmatn", Tahoma, Arial, sans-serif;
   color: #172b3a;
@@ -27,24 +49,27 @@
   --ring: 193 70% 38%;
   --radius: 1rem;
 }
+
 * { box-sizing: border-box; }
 html { min-width: 320px; min-height: 100%; background: #f5f8fb; scroll-behavior: smooth; scrollbar-gutter: stable; }
 body {
   min-width: 320px; min-height: 100vh; margin: 0;
-  background: radial-gradient(ellipse at 12% 0%, rgba(13,148,136,.055), transparent 32rem), #f5f8fb;
-  color: #172b3a; font-family: "Vazirmatn", Tahoma, Arial, sans-serif;
+  background:
+    radial-gradient(ellipse at 12% 0%, rgba(13,148,136,.055), transparent 32rem),
+    #f5f8fb;
+  color: #172b3a;
+  font-family: "Vazirmatn", Tahoma, Arial, sans-serif;
   font-feature-settings: "ss01" on;
 }
-button, input, textarea, select { font: inherit; outline-color: #0f8191; }
+button, input, textarea, select { font: inherit; }
 button { cursor: pointer; -webkit-tap-highlight-color: transparent; }
 button:disabled { cursor: not-allowed; }
 ::selection { background: #ccefe9; color: #123b45; }
 :focus-visible { outline: 3px solid rgba(13,148,136,.35); outline-offset: 2px; }
 #root { min-height: 100vh; }
 
-/* Shared visual language for the existing UI and shadcn-style design tokens. */
 .bg-\\[\\#f7f8fa\\] { background-color: #f5f8fb !important; }
-.bg-gray-900 { background-color: #123b4a !important; }
+.bg-gray-900, .bg-gray-950 { background-color: #123b4a !important; }
 .hover\\:bg-gray-800:hover { background-color: #0d303d !important; }
 .text-gray-950, .text-gray-900 { color: #172b3a !important; }
 .text-gray-800 { color: #263f4f !important; }
@@ -62,8 +87,7 @@ button:disabled { cursor: not-allowed; }
 .focus\\:ring-gray-100:focus { --tw-ring-color: #dff0f0 !important; }
 .bg-blue-50 { background-color: #e8f5f8 !important; }
 .text-blue-700 { color: #176b7b !important; }
-.rounded-xl { border-radius: 1rem; }
-.rounded-2xl { border-radius: 1.25rem; }
+
 header.border-b { border-color: #e1eaf0; box-shadow: 0 1px 0 rgba(19,59,74,.02); }
 article.group { box-shadow: 0 2px 8px rgba(24,52,70,.025); }
 article.group:hover { box-shadow: 0 12px 30px rgba(24,52,70,.075); transform: translateY(-1px); }
@@ -71,6 +95,7 @@ input, select, textarea { transition: border-color .18s ease, box-shadow .18s ea
 input:focus, select:focus, textarea:focus { box-shadow: 0 0 0 4px rgba(13,148,136,.10); }
 button { transition: color .18s ease, background-color .18s ease, border-color .18s ease, box-shadow .18s ease, transform .18s ease; }
 button:active:not(:disabled) { transform: translateY(1px); }
+
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { scroll-behavior: auto !important; animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
 }
