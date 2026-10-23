@@ -47,7 +47,7 @@ create policy "Users can update notifications for their checks" on public.notifi
       where c.id = notifications.check_id and c.user_id = (select auth.uid()))
   ) with check (
     exists (select 1 from public.checks c
-      where c.id = notifications.check_id and c.user_id = (select auth.uid())
+      where c.id = notifications.check_id and c.user_id = (select auth.uid()))
   );
 create policy "Users can delete notifications for their checks" on public.notifications
   for delete to authenticated using (
