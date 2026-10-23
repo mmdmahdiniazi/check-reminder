@@ -105,7 +105,8 @@ function CheckCard({
   };
 
   return (
-    <article className="group rounded-2xl border border-gray-200/80 bg-white p-4 transition duration-200 hover:border-teal-200 hover:shadow-lg hover:shadow-teal-950/[0.04] sm:p-5">
+    <article className="group relative overflow-hidden rounded-2xl border border-gray-200/80 bg-white p-4 shadow-sm shadow-slate-900/[0.025] transition duration-200 hover:-translate-y-0.5 hover:border-teal-200 hover:shadow-xl hover:shadow-teal-950/[0.06] sm:p-5">
+      <div className="pointer-events-none absolute inset-x-0 top-0 h-1 bg-gradient-to-l from-teal-700 via-cyan-600 to-emerald-400 opacity-70" />
       <div className="flex items-start justify-between gap-4">
         <div className="min-w-0">
           <div className="flex items-center gap-2">
@@ -161,7 +162,7 @@ function CheckCard({
       </div>
 
       <div className="mt-4 grid grid-cols-1 gap-2.5 sm:grid-cols-2">
-        <div className="rounded-xl bg-gray-50 px-3.5 py-3">
+        <div className="rounded-xl border border-gray-100 bg-slate-50/80 px-3.5 py-3">
           <p className="text-xs text-gray-400">شماره صیادی</p>
 
           <p
@@ -224,7 +225,7 @@ function CheckCard({
             type="button"
             onClick={() => onEdit(check)}
             disabled={isDeleting}
-            className="min-h-11 flex-1 rounded-xl border border-teal-100 bg-teal-50/50 px-4 py-2.5 text-sm font-semibold text-teal-800 transition hover:border-teal-200 hover:bg-teal-50 disabled:cursor-not-allowed disabled:opacity-50 sm:flex-none"
+            className="min-h-11 flex-1 rounded-xl border border-teal-100 bg-teal-50/70 px-4 py-2.5 text-sm font-semibold text-teal-800 transition hover:border-teal-200 hover:bg-teal-100/70 disabled:cursor-not-allowed disabled:opacity-50 sm:flex-none"
           >
             ویرایش
           </button>
