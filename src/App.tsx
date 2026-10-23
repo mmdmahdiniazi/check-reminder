@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 
 import CheckCard from "./components/CheckCard";
+import AdminPanel from "./components/AdminPanel";
 import CheckModal from "./components/CheckModal";
 import NotificationBell from "./components/NotificationBell";
 import Toast from "./components/Toast";
@@ -17,6 +18,8 @@ import {
 
 function App() {
   const [checks, setChecks] = useState<Check[]>([]);
+  const [currentRole, setCurrentRole] = useState<"user" | "admin" | "super_admin">("user");
+  const [showAdminPanel, setShowAdminPanel] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
 
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -103,7 +106,28 @@ function App() {
 
   useEffect(() => {
     fetchChecks();
+
+    let active = true;
+    const fetchProfile = async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return;
+      const { data, error } = await supabase
+        .from("profiles")
+        .select("role")
+        .eq("id", user.id)
+        .maybeSingle();
+      if (error) {
+        console.error("Error fetching profile role:", error);
+        return;
+      }
+      if (active && data?.role && ["user", "admin", "super_admin"].includes(data.role)) {
+        setCurrentRole(data.role as "user" | "admin" | "super_admin");
+      }
+    };
+    void fetchProfile();
+    return () => { active = false; };
   }, []);
+
 
   useEffect(() => {
     if (!toast) return;
@@ -116,6 +140,10 @@ function App() {
       window.clearTimeout(timer);
     };
   }, [toast]);
+
+  if (showAdminPanel && currentRole !== "user") {
+    return <AdminPanel currentRole={currentRole} onBack={() => setShowAdminPanel(false)} />;
+  }
 
   const handleSaveCheck = async (check: Check) => {
     if (isSaving) return;
@@ -296,6 +324,15 @@ function App() {
           </div>
 
           <div className="flex shrink-0 items-center gap-1.5 sm:gap-2">
+            {currentRole !== "user" && (
+              <button
+                type="button"
+                onClick={() => setShowAdminPanel(true)}
+                className="inline-flex min-h-11 items-center justify-center rounded-xl border border-gray-200 bg-white px-3 py-2.5 text-sm font-medium text-gray-600 transition hover:bg-gray-50"
+              >
+                مدیریت کاربران
+              </button>
+            )}
             <NotificationBell />
 
             <button
