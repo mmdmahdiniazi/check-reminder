@@ -40,7 +40,7 @@ Deno.serve(async (req) => {
   const form = new URLSearchParams({
     username,
     password,
-    to: phone.replace(/^\+/, ""),
+    to: phone.replace(/^\+98/, "0").replace(/^\+/, ""),
     from: sender,
     text: message,
     isFlash: "false",
