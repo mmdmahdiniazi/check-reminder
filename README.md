@@ -90,6 +90,33 @@ The app relies on Supabase for authentication and persisted data. Database table
 
 Ensure the required schema and policies are deployed before using the app in production. Never disable Row Level Security as a workaround.
 
+## Phone OTP authentication (Melli Payamak)
+
+The sign-in screen includes phone-number OTP authentication. This flow uses Supabase Phone Auth for OTP generation and verification, with a Supabase Auth **Send SMS Hook** forwarding the OTP to Melli Payamak. Email/password authentication remains available.
+
+### Backend setup required before enabling phone login
+
+1. In Supabase, enable **Authentication → Sign In / Providers → Phone** and configure OTP expiry and rate limits.
+2. Deploy the Edge Function from `supabase/functions/send-sms-hook/index.ts`. Deploy it with JWT verification disabled because Supabase Auth authenticates this hook with its signed webhook secret; the function validates that signature itself:
+   ```bash
+   supabase functions deploy send-sms-hook --no-verify-jwt
+   ```
+3. Set these secrets in the Supabase project (never in Vite environment variables or source control):
+   ```bash
+   supabase secrets set SEND_SMS_HOOK_SECRET="v1,whsec_<hook-secret>"
+   supabase secrets set MELIPAYAMAK_USERNAME="<panel-username>"
+   supabase secrets set MELIPAYAMAK_PASSWORD="<panel-password>"
+   supabase secrets set MELIPAYAMAK_SENDER="<approved-sender-number>"
+   ```
+   The hook secret is generated/displayed when configuring the Auth **Send SMS Hook**. Store the matching secret in Supabase Edge Function secrets.
+4. In **Authentication → Hooks**, configure **Send SMS Hook** to call the deployed `send-sms-hook` Edge Function URL and use the same hook signing secret.
+5. Verify that the Melli Payamak account has API access, credit, and an approved sender number that can deliver authentication messages. The function currently uses the standard REST `SendSMS` endpoint. If the panel requires a service-pattern endpoint for delivery to blocked numbers, adapt the sender implementation to the approved pattern and template.
+6. Test with a controlled number before production. Configure CAPTCHA and sensible OTP request limits to reduce abuse.
+
+**Important account/data note:** phone OTP may create a distinct Supabase user from an existing email/password account, even when both methods belong to the same person. Existing cheque records are scoped to their current user ID. Keep email login available and do not assume existing records automatically appear in a new phone-auth account; existing-account linking or a verified data migration must be handled deliberately.
+
+The SMS hook keeps Melli Payamak credentials server-side, validates the signed Supabase webhook, validates the recipient and OTP payload, and avoids logging the OTP or credentials. A successful provider response means the provider accepted the request; it does not guarantee handset delivery.
+
 ## Project structure
 
 ```text
