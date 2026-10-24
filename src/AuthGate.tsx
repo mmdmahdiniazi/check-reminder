@@ -11,6 +11,7 @@ import {
   CardTitle,
 } from "./components/ui/card";
 import { Input } from "./components/ui/input";
+import PhoneOtpForm from "./components/PhoneOtpForm";
 
 type AuthMode = "signin" | "signup";
 
@@ -36,6 +37,7 @@ export default function AuthGate() {
   const [session, setSession] = useState<Session | null>(null);
   const [checking, setChecking] = useState(true);
   const [mode, setMode] = useState<AuthMode>("signin");
+  const [usePhoneAuth, setUsePhoneAuth] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [busy, setBusy] = useState(false);
@@ -192,6 +194,7 @@ export default function AuthGate() {
             </CardDescription>
           </CardHeader>
           <CardContent className="px-6 pb-8 pt-5 sm:px-10 sm:pb-12">
+            {!usePhoneAuth && (
             <div className="mb-6 grid grid-cols-2 rounded-xl border border-border bg-slate-100/80 p-1">
               <button
                 type="button"
@@ -216,6 +219,10 @@ export default function AuthGate() {
                 ثبت‌نام
               </button>
             </div>
+            )}
+            {usePhoneAuth ? (
+              <PhoneOtpForm onBack={() => setUsePhoneAuth(false)} />
+            ) : (
             <form onSubmit={handleSubmit} className="space-y-5">
               <div className="space-y-2">
                 <label
@@ -275,6 +282,10 @@ export default function AuthGate() {
                     : "ورود به حساب"}
               </Button>
             </form>
+            )}
+            <button type="button" onClick={() => { setUsePhoneAuth((current) => !current); setError(""); setMessage(""); }} className="mt-4 w-full rounded-xl border border-border px-4 py-3 text-sm font-semibold text-slate-700 transition hover:bg-slate-50">
+              {usePhoneAuth ? "ورود با ایمیل و رمز عبور" : "ورود با شماره موبایل و کد پیامکی"}
+            </button>
             {error && (
               <p
                 role="alert"
