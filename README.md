@@ -58,10 +58,12 @@ Create a `.env.local` file in the project root:
 
 ```env
 VITE_SUPABASE_URL=your_supabase_project_url
-VITE_SUPABASE_ANON_KEY=your_supabase_public_key
+VITE_SUPABASE_PUBLISHABLE_KEY=your_supabase_publishable_key
+# Or use the legacy public anon key variable instead:
+# VITE_SUPABASE_ANON_KEY=your_supabase_anon_key
 ```
 
-Use your own Supabase project URL and public client key. Never put a service-role key or other secret in a `VITE_*` client-side variable. Configure the same required variables in your deployment environment.
+Use your own Supabase project URL and public client key. The app accepts `VITE_SUPABASE_PUBLISHABLE_KEY` (recommended) or the legacy `VITE_SUPABASE_ANON_KEY` variable. Set one of those key variables, not both. Never put a service-role key or any private secret in a `VITE_*` client-side variable. Configure the same variables in your deployment environment.
 
 ### 4. Start the development server
 
@@ -134,7 +136,7 @@ The frontend is deployed on Vercel and uses Supabase for backend services.
 - **Production app:** https://check-reminder-y17h.vercel.app/
 - **Repository:** https://github.com/mmdmahdiniazi/check-reminder
 
-Set `VITE_SUPABASE_URL` and `VITE_SUPABASE_ANON_KEY` in Vercel project settings, then redeploy after environment changes.
+Set `VITE_SUPABASE_URL` and either `VITE_SUPABASE_PUBLISHABLE_KEY` or `VITE_SUPABASE_ANON_KEY` in Vercel project settings, then redeploy after environment changes.
 
 ## License
 
