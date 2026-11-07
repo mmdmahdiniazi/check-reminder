@@ -77,7 +77,7 @@ button:disabled { cursor: not-allowed; }
 .text-gray-600 { color: #526a7a !important; }
 .text-gray-500 { color: #718493 !important; }
 .text-gray-400 { color: #8fa0ad !important; }
-.border-gray-200, .border-gray-200\\/80 { border-color: #dce5eb !important; }
+.border-gray-200, [class~="border-gray-200/80"] { border-color: #dce5eb !important; }
 .border-gray-100 { border-color: #eaf0f4 !important; }
 .bg-gray-50 { background-color: #f6f9fb !important; }
 .bg-gray-100 { background-color: #edf3f6 !important; }
