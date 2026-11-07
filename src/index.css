@@ -68,9 +68,9 @@ button:disabled { cursor: not-allowed; }
 :focus-visible { outline: 3px solid rgba(13,148,136,.35); outline-offset: 2px; }
 #root { min-height: 100vh; }
 
-.bg-\\[\\#f7f8fa\\] { background-color: #f5f8fb !important; }
+[class~="bg-[#f7f8fa]"] { background-color: #f5f8fb !important; }
 .bg-gray-900, .bg-gray-950 { background-color: #123b4a !important; }
-.hover\\:bg-gray-800:hover { background-color: #0d303d !important; }
+[class~="hover:bg-gray-800"]:hover { background-color: #0d303d !important; }
 .text-gray-950, .text-gray-900 { color: #172b3a !important; }
 .text-gray-800 { color: #263f4f !important; }
 .text-gray-700 { color: #365163 !important; }
@@ -81,10 +81,10 @@ button:disabled { cursor: not-allowed; }
 .border-gray-100 { border-color: #eaf0f4 !important; }
 .bg-gray-50 { background-color: #f6f9fb !important; }
 .bg-gray-100 { background-color: #edf3f6 !important; }
-.hover\\:bg-gray-50:hover { background-color: #f4f8fa !important; }
-.hover\\:bg-gray-100:hover { background-color: #eaf1f5 !important; }
-.focus\\:border-gray-400:focus { border-color: #6ba8b0 !important; }
-.focus\\:ring-gray-100:focus { --tw-ring-color: #dff0f0 !important; }
+[class~="hover:bg-gray-50"]:hover { background-color: #f4f8fa !important; }
+[class~="hover:bg-gray-100"]:hover { background-color: #eaf1f5 !important; }
+[class~="focus:border-gray-400"]:focus { border-color: #6ba8b0 !important; }
+[class~="focus:ring-gray-100"]:focus { --tw-ring-color: #dff0f0 !important; }
 .bg-blue-50 { background-color: #e8f5f8 !important; }
 .text-blue-700 { color: #176b7b !important; }
 
