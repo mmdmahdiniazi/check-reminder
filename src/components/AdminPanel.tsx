@@ -4,6 +4,7 @@ import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 import { Card, CardContent } from "./ui/card";
 import { Badge } from "./ui/badge";
+import ThemeToggle from "./ThemeToggle";
 
 type UserRole = "user" | "admin" | "super_admin";
 type UserPlan = "free" | "pro" | "enterprise";
@@ -108,6 +109,7 @@ export default function AdminPanel({ currentRole, onBack }: AdminPanelProps) {
           </div>
         </div>
         <div className="flex flex-wrap items-center gap-2">
+          <ThemeToggle />
           <Button variant="outline" onClick={() => void loadUsers()} disabled={loading} className="border-white/20 bg-white/10 text-white hover:bg-white/20 hover:text-white">
             {loading ? "در حال بروزرسانی..." : "بروزرسانی"}
           </Button>
