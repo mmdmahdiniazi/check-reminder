@@ -5,6 +5,7 @@ import AdminPanel from "./components/AdminPanel";
 import CheckModal from "./components/CheckModal";
 import NotificationBell from "./components/NotificationBell";
 import ThemeToggle from "./components/ThemeToggle";
+import AppNavigation from "./components/AppNavigation";
 import Toast from "./components/Toast";
 import { Button } from "./components/ui/button";
 import { Input } from "./components/ui/input";
@@ -425,7 +426,13 @@ function App() {
   }
 
   return (
-    <div className="min-h-screen bg-[#f5f8fb] text-gray-900" dir="rtl">
+    <>
+      <AppNavigation
+        currentPage="dashboard"
+        canManage={Boolean(profile && profile.role !== "user")}
+        onOpenAdmin={() => setShowAdminPanel(true)}
+      />
+      <div className="app-content min-h-screen bg-[#f5f8fb] text-gray-900 lg:mr-64" dir="rtl">
       <header className="border-b border-gray-200/80 bg-white/90 backdrop-blur">
         <div className="mx-auto flex max-w-7xl items-center justify-between gap-2 px-3 py-3 sm:gap-4 sm:px-6 sm:py-4 lg:px-8">
           <div className="flex min-w-0 flex-1 items-center gap-2">
@@ -517,7 +524,7 @@ function App() {
       </header>
 
       <main className="mx-auto max-w-7xl px-4 py-6 sm:px-6 sm:py-8 lg:px-8">
-        <section className="mb-6 flex flex-col gap-4 rounded-3xl border border-white/80 bg-gradient-to-l from-white via-white to-teal-50/70 p-5 shadow-sm shadow-slate-900/[0.025] sm:mb-8 sm:flex-row sm:items-end sm:justify-between sm:p-7">
+        <section id="overview" className="mb-6 flex flex-col gap-4 rounded-3xl border border-white/80 bg-gradient-to-l from-white via-white to-teal-50/70 p-5 shadow-sm shadow-slate-900/[0.025] sm:mb-8 sm:flex-row sm:items-end sm:justify-between sm:p-7">
           <div>
             <p className="mb-2 inline-flex items-center gap-2 rounded-full border border-teal-100 bg-teal-50 px-3 py-1 text-xs font-bold text-teal-800">
               نمای کلی حساب{" "}
@@ -649,7 +656,7 @@ function App() {
           </div>
         </section>
 
-        <section className="mt-9 sm:mt-12">
+        <section id="checks" className="mt-9 scroll-mt-6 sm:mt-12">
           <div className="mb-4 flex flex-col gap-3 rounded-2xl border border-gray-200/80 bg-white p-4 shadow-sm shadow-slate-900/[0.025] sm:mb-5 sm:flex-row sm:items-end sm:justify-between sm:p-5">
             <div>
               <h2 className="text-lg font-bold text-gray-950">
@@ -817,6 +824,7 @@ function App() {
         />
       )}
     </div>
+    </>
   );
 }
 
