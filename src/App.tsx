@@ -432,381 +432,115 @@ function App() {
         canManage={Boolean(profile && profile.role !== "user")}
         onOpenAdmin={() => setShowAdminPanel(true)}
       />
-      <div className="app-content min-h-screen bg-[#f5f8fb] text-gray-900 lg:mr-64" dir="rtl">
-      <header className="border-b border-gray-200/80 bg-white/90 backdrop-blur">
-        <div className="mx-auto flex max-w-7xl items-center justify-between gap-2 px-3 py-3 sm:gap-4 sm:px-6 sm:py-4 lg:px-8">
-          <div className="flex min-w-0 flex-1 items-center gap-2">
-            <div className="flex min-w-0 items-center gap-2">
-              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-teal-700 to-cyan-800 text-sm font-extrabold text-white shadow-md shadow-teal-900/15">
-                چ
-              </div>
-
+      <div className="app-content min-h-screen bg-background text-foreground lg:mr-64" dir="rtl">
+        <header className="sticky top-0 z-30 border-b border-border bg-card/95 shadow-sm shadow-slate-950/[0.025] backdrop-blur-xl">
+          <div className="mx-auto flex max-w-7xl items-center justify-between gap-3 px-4 py-3 sm:px-6 lg:px-8">
+            <div className="flex min-w-0 items-center gap-3">
+              <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-primary text-lg font-extrabold text-primary-foreground shadow-lg shadow-blue-900/10">چ</div>
               <div className="min-w-0">
-                <h1 className="truncate text-base font-extrabold text-gray-900 sm:text-lg">
-                  یادآور چک
-                </h1>
+                <h1 className="truncate text-base font-extrabold tracking-tight text-foreground sm:text-lg">یادآور چک</h1>
+                <p className="mt-0.5 hidden text-xs text-muted-foreground sm:block">مدیریت هوشمند سررسید چک‌ها</p>
+              </div>
+            </div>
+            <div className="flex shrink-0 items-center gap-1.5 sm:gap-2">
+              {profile && profile.role !== "user" && (
+                <button type="button" onClick={() => setShowAdminPanel(true)} className="hidden min-h-10 items-center justify-center rounded-xl border border-border bg-card px-3 text-sm font-semibold text-foreground transition hover:bg-muted sm:inline-flex">پنل مدیریت</button>
+              )}
+              <ThemeToggle />
+              <NotificationBell />
+              <button type="button" onClick={async () => {
+                const { error } = await supabase.auth.signOut();
+                if (error) showToast("error", "خروج از حساب انجام نشد.");
+              }} className="inline-flex min-h-10 items-center justify-center rounded-xl border border-border bg-card px-3 text-sm font-semibold text-muted-foreground transition hover:bg-muted hover:text-foreground">خروج</button>
+              <button type="button" onClick={handleOpenAddModal} disabled={isSaving} className="inline-flex min-h-10 items-center justify-center gap-2 rounded-xl bg-primary px-3.5 text-sm font-bold text-primary-foreground shadow-sm transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50 sm:px-4">
+                <span className="text-xl leading-none">+</span><span className="hidden sm:inline">ثبت چک جدید</span><span className="sm:hidden">ثبت چک</span>
+              </button>
+            </div>
+          </div>
+        </header>
 
-                <p className="mt-0.5 hidden text-xs text-gray-500 sm:block">
-                  پیگیری ساده و منظم سررسید چک‌ها
-                </p>
-                <div className="mt-2 flex flex-wrap items-center gap-2">
+        <main className="mx-auto max-w-7xl px-4 pb-28 pt-6 sm:px-6 sm:pb-12 sm:pt-8 lg:px-8">
+          <section id="overview" className="relative mb-6 overflow-hidden rounded-3xl border border-border bg-card p-5 shadow-sm shadow-slate-950/[0.025] sm:mb-8 sm:p-7 lg:p-8">
+            <div className="pointer-events-none absolute -left-16 -top-24 h-64 w-64 rounded-full bg-primary/10 blur-3xl" />
+            <div className="relative flex flex-col gap-6 sm:flex-row sm:items-end sm:justify-between">
+              <div className="max-w-2xl">
+                <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-primary/15 bg-secondary px-3 py-1.5 text-xs font-bold text-primary"><span className="h-2 w-2 rounded-full bg-primary" />نمای کلی حساب</div>
+                <h2 className="text-2xl font-extrabold tracking-tight text-foreground sm:text-3xl">وضعیت چک‌های شما</h2>
+                <p className="mt-2 max-w-xl text-sm leading-7 text-muted-foreground sm:text-base">همه چک‌های دریافتی و سررسیدهای پیش‌رو را در یک نمای منظم مدیریت کنید.</p>
+                <div className="mt-5 flex flex-wrap items-center gap-2">
                   {isProfileLoading ? (
-                    <span className="text-xs text-gray-400">
-                      در حال دریافت اطلاعات حساب...
-                    </span>
+                    <span className="inline-flex items-center gap-2 rounded-xl bg-muted px-3 py-2 text-xs font-medium text-muted-foreground"><span className="h-2 w-2 animate-pulse rounded-full bg-primary" />در حال دریافت اطلاعات حساب...</span>
                   ) : profile ? (
                     <>
-                      <span className="rounded-lg bg-gray-100 px-2.5 py-1 text-xs font-medium text-gray-700">
-                        {roleLabels[profile.role]}
-                      </span>
-
-                      <span className="rounded-lg bg-blue-50 px-2.5 py-1 text-xs font-medium text-blue-700">
-                        پلن {planLabels[profile.plan]}
-                      </span>
+                      <span className="rounded-xl border border-border bg-muted px-3 py-2 text-xs font-semibold text-foreground">{roleLabels[profile.role]}</span>
+                      <span className="rounded-xl border border-primary/15 bg-secondary px-3 py-2 text-xs font-semibold text-primary">پلن {planLabels[profile.plan]}</span>
                     </>
                   ) : (
-                    <div className="flex flex-wrap items-center gap-2">
-                      <span className="text-xs text-red-600">
-                        {profileError}
-                      </span>
-
-                      <button
-                        type="button"
-                        onClick={() => void fetchProfile()}
-                        className="text-xs font-semibold text-gray-700 underline underline-offset-4"
-                      >
-                        تلاش مجدد
-                      </button>
-                    </div>
+                    <div className="flex flex-wrap items-center gap-2"><span className="text-xs text-destructive">{profileError}</span><button type="button" onClick={() => void fetchProfile()} className="text-xs font-bold text-primary underline underline-offset-4">تلاش مجدد</button></div>
                   )}
                 </div>
               </div>
-            </div>
-          </div>
-
-          <div className="flex shrink-0 items-center gap-1.5 sm:gap-2">
-            {profile && profile.role !== "user" && (
-              <button
-                type="button"
-                onClick={() => setShowAdminPanel(true)}
-                className="inline-flex min-h-11 items-center justify-center rounded-xl border border-gray-200 bg-white px-3 py-2.5 text-sm font-medium text-gray-700 transition hover:bg-gray-50"
-              >
-                پنل مدیریت
-              </button>
-            )}
-            <ThemeToggle />
-            <NotificationBell />
-
-            <button
-              type="button"
-              onClick={async () => {
-                const { error } = await supabase.auth.signOut();
-                if (error) showToast("error", "خروج از حساب انجام نشد.");
-              }}
-              className="inline-flex min-h-11 items-center justify-center rounded-xl border border-gray-200 bg-white px-3 py-2.5 text-sm font-medium text-gray-600 transition hover:bg-gray-50"
-            >
-              خروج
-            </button>
-
-            <button
-              type="button"
-              onClick={handleOpenAddModal}
-              disabled={isSaving}
-              className="inline-flex min-h-11 items-center justify-center gap-1.5 rounded-xl bg-gray-900 px-3.5 py-2.5 text-sm font-semibold text-white transition hover:bg-gray-800 disabled:cursor-not-allowed disabled:opacity-50 sm:px-4"
-            >
-              <span className="text-lg leading-none">+</span>
-
-              <span className="hidden sm:inline">ثبت چک جدید</span>
-              <span className="sm:hidden">ثبت چک</span>
-            </button>
-          </div>
-        </div>
-      </header>
-
-      <main className="mx-auto max-w-7xl px-4 py-6 sm:px-6 sm:py-8 lg:px-8">
-        <section id="overview" className="mb-6 flex flex-col gap-4 rounded-3xl border border-white/80 bg-gradient-to-l from-white via-white to-teal-50/70 p-5 shadow-sm shadow-slate-900/[0.025] sm:mb-8 sm:flex-row sm:items-end sm:justify-between sm:p-7">
-          <div>
-            <p className="mb-2 inline-flex items-center gap-2 rounded-full border border-teal-100 bg-teal-50 px-3 py-1 text-xs font-bold text-teal-800">
-              نمای کلی حساب{" "}
-              <span className="h-1.5 w-1.5 rounded-full bg-teal-600" />
-            </p>
-
-            <h2 className="text-2xl font-bold tracking-tight text-gray-950 sm:text-3xl">
-              وضعیت چک‌های شما
-            </h2>
-
-            <p className="mt-2 max-w-xl text-sm leading-6 text-gray-500">
-              چک‌های ثبت‌شده و نزدیک‌ترین سررسیدها را از یکجا مدیریت کنید.
-            </p>
-          </div>
-
-          <div className="text-sm text-gray-500">
-            {checks.length === 0
-              ? "هنوز چکی ثبت نشده"
-              : `${checks.length} چک در حساب شما`}
-          </div>
-        </section>
-
-        {errorMessage && (
-          <div className="mb-6 flex items-start gap-3 rounded-xl border border-red-100 bg-red-50 px-4 py-3">
-            <p className="flex-1 text-sm leading-6 text-red-600">
-              {errorMessage}
-            </p>
-
-            <button
-              type="button"
-              onClick={() => setErrorMessage("")}
-              className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg text-lg text-red-400 transition hover:bg-red-100 hover:text-red-600"
-              aria-label="بستن پیام خطا"
-            >
-              ×
-            </button>
-          </div>
-        )}
-
-        <section className="grid grid-cols-1 gap-4 sm:grid-cols-3">
-          <div className="rounded-2xl border border-gray-200/80 bg-white p-5 shadow-sm shadow-slate-900/[0.025] transition duration-200 hover:-translate-y-0.5 hover:shadow-md">
-            <div className="flex items-center justify-between gap-3">
-              <p className="text-sm text-gray-500">کل چک‌ها</p>
-
-              <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-gray-100 text-gray-600">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  strokeWidth={1.7}
-                  stroke="currentColor"
-                  className="h-5 w-5"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="M9 12h6m-6 4h6M7 4h10a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2Z"
-                  />
-                </svg>
-              </span>
-            </div>
-
-            <p className="mt-5 text-3xl font-bold tracking-tight text-gray-950">
-              {checks.length.toLocaleString("fa-IR")}
-            </p>
-
-            <p className="mt-1 text-xs text-gray-400">چک ثبت‌شده</p>
-          </div>
-
-          <div className="rounded-2xl border border-gray-200/80 bg-white p-5 shadow-sm shadow-slate-900/[0.025] transition duration-200 hover:-translate-y-0.5 hover:shadow-md">
-            <div className="flex items-center justify-between gap-3">
-              <p className="text-sm text-gray-500">نزدیک‌ترین سررسید</p>
-
-              <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-orange-50 text-orange-600">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  strokeWidth={1.7}
-                  stroke="currentColor"
-                  className="h-5 w-5"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="M12 8v4l2.5 2.5M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
-                  />
-                </svg>
-              </span>
-            </div>
-
-            <p
-              className="mt-5 text-2xl font-bold tracking-tight text-gray-950"
-              dir="ltr"
-            >
-              {nearestDueDate ?? "-"}
-            </p>
-
-            <p className="mt-1 text-xs text-gray-400">نزدیک‌ترین تاریخ آینده</p>
-          </div>
-
-          <div className="rounded-2xl border border-gray-200/80 bg-white p-5 shadow-sm shadow-slate-900/[0.025] transition duration-200 hover:-translate-y-0.5 hover:shadow-md">
-            <div className="flex items-center justify-between gap-3">
-              <p className="text-sm text-gray-500">سررسید این هفته</p>
-
-              <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-green-50 text-green-600">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  strokeWidth={1.7}
-                  stroke="currentColor"
-                  className="h-5 w-5"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="M8 2v4m8-4v4M4 10h16M6 4h12a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2Z"
-                  />
-                </svg>
-              </span>
-            </div>
-
-            <p className="mt-5 text-3xl font-bold tracking-tight text-gray-950">
-              {dueThisWeek.toLocaleString("fa-IR")}
-            </p>
-
-            <p className="mt-1 text-xs text-gray-400">چک در هفت روز آینده</p>
-          </div>
-        </section>
-
-        <section id="checks" className="mt-9 scroll-mt-6 sm:mt-12">
-          <div className="mb-4 flex flex-col gap-3 rounded-2xl border border-gray-200/80 bg-white p-4 shadow-sm shadow-slate-900/[0.025] sm:mb-5 sm:flex-row sm:items-end sm:justify-between sm:p-5">
-            <div>
-              <h2 className="text-lg font-bold text-gray-950">
-                چک‌های دریافتی
-              </h2>
-
-              <p className="mt-1 text-sm text-gray-500">
-                {isSearching
-                  ? `${filteredChecks.length} نتیجه از ${checks.length} چک`
-                  : `${checks.length} چک ثبت شده`}
-              </p>
-            </div>
-
-            <div className="relative w-full sm:w-80">
-              <Input
-                type="search"
-                value={searchQuery}
-                onChange={(event) => setSearchQuery(event.target.value)}
-                placeholder="جستجوی نام، شماره صیادی یا موبایل"
-                aria-label="جستجوی چک"
-                className="h-12 w-full rounded-xl border-gray-200 bg-white px-10 text-base sm:text-sm"
-              />
-
-              <span
-                className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-gray-400"
-                aria-hidden="true"
-              >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  strokeWidth={1.8}
-                  stroke="currentColor"
-                  className="h-5 w-5"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="m21 21-4.35-4.35m1.35-5.65a7 7 0 1 1-14 0 7 7 0 0 1 14 0Z"
-                  />
-                </svg>
-              </span>
-
-              {searchQuery && (
-                <button
-                  type="button"
-                  onClick={() => setSearchQuery("")}
-                  className="absolute left-2 top-1/2 flex h-9 w-9 -translate-y-1/2 items-center justify-center rounded-lg text-lg text-gray-400 transition hover:bg-gray-100 hover:text-gray-700"
-                  aria-label="پاک کردن جستجو"
-                >
-                  ×
-                </button>
-              )}
-            </div>
-          </div>
-
-          {isLoading ? (
-            <div className="rounded-2xl border border-gray-200/80 bg-white px-4 py-20 text-center">
-              <div className="mx-auto h-7 w-7 animate-spin rounded-full border-2 border-gray-200 border-t-gray-800" />
-
-              <p className="mt-4 text-sm text-gray-500">
-                در حال دریافت چک‌ها...
-              </p>
-            </div>
-          ) : checks.length === 0 ? (
-            <div className="rounded-2xl border border-dashed border-gray-300 bg-white px-5 py-16 text-center">
-              <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-gray-100 text-gray-500">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  strokeWidth={1.7}
-                  stroke="currentColor"
-                  className="h-7 w-7"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="M9 12h6m-6 4h6M7 4h10a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2Z"
-                  />
-                </svg>
+              <div className="flex shrink-0 items-center justify-between gap-4 rounded-2xl border border-border bg-muted/70 px-4 py-3 sm:min-w-48 sm:flex-col sm:items-start sm:justify-center">
+                <span className="text-xs font-medium text-muted-foreground">تعداد چک‌های ثبت‌شده</span>
+                <span className="text-2xl font-extrabold tabular-nums text-foreground">{checks.length.toLocaleString("fa-IR")}</span>
               </div>
-
-              <p className="mt-5 text-base font-semibold text-gray-800">
-                هنوز چکی ثبت نشده است
-              </p>
-
-              <p className="mt-2 text-sm text-gray-500">
-                اولین چک خود را ثبت کنید تا مدیریت سررسیدها شروع شود.
-              </p>
-
-              <Button
-                type="button"
-                onClick={handleOpenAddModal}
-                className="mt-6"
-              >
-                ثبت اولین چک
-              </Button>
             </div>
-          ) : filteredChecks.length === 0 ? (
-            <div className="rounded-2xl border border-dashed border-gray-300 bg-white px-5 py-16 text-center">
-              <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-gray-100 text-gray-400">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  strokeWidth={1.8}
-                  stroke="currentColor"
-                  className="h-7 w-7"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="m21 21-4.35-4.35m1.35-5.65a7 7 0 1 1-14 0 7 7 0 0 1 14 0Z"
-                  />
-                </svg>
-              </div>
+          </section>
 
-              <p className="mt-5 text-base font-semibold text-gray-800">
-                چکی پیدا نشد
-              </p>
-
-              <p className="mt-2 text-sm text-gray-500">
-                عبارت جستجو را تغییر دهید یا جستجو را پاک کنید.
-              </p>
-
-              <button
-                type="button"
-                onClick={() => setSearchQuery("")}
-                className="mt-6 min-h-11 rounded-xl border border-gray-200 bg-white px-5 py-2.5 text-sm font-semibold text-gray-700 transition hover:bg-gray-50"
-              >
-                پاک کردن جستجو
-              </button>
-            </div>
-          ) : (
-            <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
-              {filteredChecks.map((check) => (
-                <CheckCard
-                  key={check.id}
-                  check={check}
-                  onEdit={handleEditCheck}
-                  onDelete={handleDeleteCheck}
-                  isDeleting={deletingCheckId === check.id}
-                />
-              ))}
+          {errorMessage && (
+            <div className="mb-6 flex items-start gap-3 rounded-2xl border border-destructive/20 bg-destructive/5 px-4 py-3">
+              <p className="flex-1 text-sm leading-6 text-destructive">{errorMessage}</p>
+              <button type="button" onClick={() => setErrorMessage("")} className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg text-lg text-destructive/70 transition hover:bg-destructive/10" aria-label="بستن پیام خطا">×</button>
             </div>
           )}
-        </section>
-      </main>
 
+          <section aria-label="آمار چک‌ها" className="grid grid-cols-1 gap-3 sm:grid-cols-3 sm:gap-4">
+            <div className="group rounded-2xl border border-border bg-card p-5 shadow-sm shadow-slate-950/[0.02] transition duration-200 hover:-translate-y-0.5 hover:shadow-md">
+              <div className="flex items-center justify-between gap-3"><p className="text-sm font-semibold text-muted-foreground">کل چک‌ها</p><span className="flex h-10 w-10 items-center justify-center rounded-xl bg-secondary text-primary"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.8} stroke="currentColor" className="h-5 w-5"><path strokeLinecap="round" strokeLinejoin="round" d="M9 12h6m-6 4h6M7 4h10a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2Z" /></svg></span></div>
+              <p className="mt-5 text-3xl font-extrabold tracking-tight tabular-nums text-foreground">{checks.length.toLocaleString("fa-IR")}</p><p className="mt-1 text-xs text-muted-foreground">چک ثبت‌شده در حساب شما</p>
+            </div>
+            <div className="group rounded-2xl border border-border bg-card p-5 shadow-sm shadow-slate-950/[0.02] transition duration-200 hover:-translate-y-0.5 hover:shadow-md">
+              <div className="flex items-center justify-between gap-3"><p className="text-sm font-semibold text-muted-foreground">نزدیک‌ترین سررسید</p><span className="flex h-10 w-10 items-center justify-center rounded-xl bg-[color-mix(in_srgb,var(--warning)_12%,var(--card))] text-[var(--warning)]"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.8} stroke="currentColor" className="h-5 w-5"><path strokeLinecap="round" strokeLinejoin="round" d="M12 8v4l2.5 2.5M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" /></svg></span></div>
+              <p className="mt-5 text-2xl font-extrabold tracking-tight tabular-nums text-foreground" dir="ltr">{nearestDueDate ?? "—"}</p><p className="mt-1 text-xs text-muted-foreground">نزدیک‌ترین تاریخ آینده</p>
+            </div>
+            <div className="group rounded-2xl border border-border bg-card p-5 shadow-sm shadow-slate-950/[0.02] transition duration-200 hover:-translate-y-0.5 hover:shadow-md">
+              <div className="flex items-center justify-between gap-3"><p className="text-sm font-semibold text-muted-foreground">سررسید این هفته</p><span className="flex h-10 w-10 items-center justify-center rounded-xl bg-[color-mix(in_srgb,var(--success)_12%,var(--card))] text-[var(--success)]"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.8} stroke="currentColor" className="h-5 w-5"><path strokeLinecap="round" strokeLinejoin="round" d="M8 2v4m8-4v4M4 10h16M6 4h12a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2Z" /></svg></span></div>
+              <p className="mt-5 text-3xl font-extrabold tracking-tight tabular-nums text-foreground">{dueThisWeek.toLocaleString("fa-IR")}</p><p className="mt-1 text-xs text-muted-foreground">چک در هفت روز آینده</p>
+            </div>
+          </section>
+
+          <section id="checks" className="mt-8 scroll-mt-24 sm:mt-10">
+            <div className="mb-4 flex flex-col gap-4 rounded-2xl border border-border bg-card p-4 shadow-sm shadow-slate-950/[0.02] sm:mb-5 sm:flex-row sm:items-center sm:justify-between sm:p-5">
+              <div><div className="flex items-center gap-2"><h2 className="text-lg font-extrabold tracking-tight text-foreground">چک‌های دریافتی</h2><span className="rounded-lg bg-secondary px-2 py-1 text-xs font-bold text-primary">{filteredChecks.length.toLocaleString("fa-IR")}</span></div><p className="mt-1 text-sm text-muted-foreground">{isSearching ? `${filteredChecks.length} نتیجه از ${checks.length} چک` : `${checks.length} چک ثبت شده`}</p></div>
+              <div className="relative w-full sm:w-80 lg:w-96">
+                <Input type="search" value={searchQuery} onChange={(event) => setSearchQuery(event.target.value)} placeholder="جستجوی نام، شماره صیادی یا موبایل" aria-label="جستجوی چک" className="h-12 w-full rounded-xl border-border bg-background px-10 text-base sm:text-sm" />
+                <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.8} stroke="currentColor" className="h-5 w-5"><path strokeLinecap="round" strokeLinejoin="round" d="m21 21-4.35-4.35m1.35-5.65a7 7 0 1 1-14 0 7 7 0 0 1 14 0Z" /></svg></span>
+                {searchQuery && <button type="button" onClick={() => setSearchQuery("")} className="absolute left-2 top-1/2 flex h-9 w-9 -translate-y-1/2 items-center justify-center rounded-lg text-lg text-muted-foreground transition hover:bg-muted hover:text-foreground" aria-label="پاک کردن جستجو">×</button>}
+              </div>
+            </div>
+
+            {isLoading ? (
+              <div className="rounded-2xl border border-border bg-card px-4 py-20 text-center"><div className="mx-auto h-8 w-8 animate-spin rounded-full border-[3px] border-border border-t-primary" /><p className="mt-4 text-sm font-medium text-muted-foreground">در حال دریافت چک‌ها...</p></div>
+            ) : checks.length === 0 ? (
+              <div className="rounded-3xl border border-dashed border-border bg-card px-5 py-16 text-center">
+                <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-secondary text-primary"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.7} stroke="currentColor" className="h-8 w-8"><path strokeLinecap="round" strokeLinejoin="round" d="M9 12h6m-6 4h6M7 4h10a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2Z" /></svg></div>
+                <p className="mt-5 text-base font-bold text-foreground">هنوز چکی ثبت نشده است</p><p className="mt-2 text-sm text-muted-foreground">اولین چک خود را ثبت کنید تا مدیریت سررسیدها شروع شود.</p>
+                <Button type="button" onClick={handleOpenAddModal} className="mt-6 min-h-11 rounded-xl px-5">ثبت اولین چک</Button>
+              </div>
+            ) : filteredChecks.length === 0 ? (
+              <div className="rounded-3xl border border-dashed border-border bg-card px-5 py-16 text-center">
+                <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-muted text-muted-foreground"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.8} stroke="currentColor" className="h-8 w-8"><path strokeLinecap="round" strokeLinejoin="round" d="m21 21-4.35-4.35m1.35-5.65a7 7 0 1 1-14 0 7 7 0 0 1 14 0Z" /></svg></div>
+                <p className="mt-5 text-base font-bold text-foreground">چکی پیدا نشد</p><p className="mt-2 text-sm text-muted-foreground">عبارت جستجو را تغییر دهید یا جستجو را پاک کنید.</p>
+                <button type="button" onClick={() => setSearchQuery("")} className="mt-6 min-h-11 rounded-xl border border-border bg-card px-5 py-2.5 text-sm font-bold text-foreground transition hover:bg-muted">پاک کردن جستجو</button>
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 gap-4 xl:grid-cols-2 xl:gap-5">
+                {filteredChecks.map((check) => <CheckCard key={check.id} check={check} onEdit={handleEditCheck} onDelete={handleDeleteCheck} isDeleting={deletingCheckId === check.id} />)}
+              </div>
+            )}
+          </section>
+        </main>
+      </div>
       {isModalOpen && (
         <CheckModal
           check={editingCheck}
