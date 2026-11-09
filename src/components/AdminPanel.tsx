@@ -5,6 +5,7 @@ import { Input } from "./ui/input";
 import { Card, CardContent } from "./ui/card";
 import { Badge } from "./ui/badge";
 import ThemeToggle from "./ThemeToggle";
+import AppNavigation from "./AppNavigation";
 
 type UserRole = "user" | "admin" | "super_admin";
 type UserPlan = "free" | "pro" | "enterprise";
@@ -98,7 +99,9 @@ export default function AdminPanel({ currentRole, onBack }: AdminPanelProps) {
   );
 
   return (
-    <main dir="rtl" className="mx-auto min-h-screen max-w-7xl px-4 py-6 sm:px-6 sm:py-9 lg:px-8">
+    <>
+      <AppNavigation currentPage="admin" onBack={onBack} />
+      <main dir="rtl" className="app-content mx-auto min-h-screen max-w-7xl px-4 pb-24 py-6 sm:px-6 sm:py-9 lg:mr-64 lg:px-8 lg:pb-9">
       <header className="mb-8 flex flex-col gap-5 rounded-3xl border border-white bg-gradient-to-l from-[#123b4a] via-[#145969] to-[#0c777d] p-5 text-white shadow-xl shadow-teal-950/10 sm:flex-row sm:items-center sm:justify-between sm:p-7">
         <div className="flex items-start gap-4">
           <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl border border-white/15 bg-white/10 text-xl">⚙</div>
@@ -200,5 +203,6 @@ export default function AdminPanel({ currentRole, onBack }: AdminPanelProps) {
       )}
       <p className="mt-5 text-xs leading-6 text-muted-foreground">تغییرات از طریق توابع امن دیتابیس ثبت می‌شوند. مدیر عادی امکان تغییر نقش‌ها را ندارد.</p>
     </main>
+    </>
   );
 }
