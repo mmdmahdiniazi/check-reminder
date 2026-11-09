@@ -50,6 +50,9 @@
   --warning: #E9A23B;
   --danger: #DC5353;
   --brand-navy: #172B4D;
+  --brand-gradient-start: #123B4A;
+  --brand-gradient-mid: #145969;
+  --brand-gradient-end: #0C777D;
   --radius: 1rem;
 }
 
@@ -75,6 +78,9 @@
   --warning: #F6CA82;
   --danger: #FF8585;
   --brand-navy: #0B1422;
+  --brand-gradient-start: #0B1422;
+  --brand-gradient-mid: #183B5E;
+  --brand-gradient-end: #245A8D;
 }
 
 * { box-sizing: border-box; }
@@ -121,11 +127,15 @@ button:disabled { cursor: not-allowed; }
 .bg-blue-50, .bg-teal-50, .bg-teal-100, .bg-cyan-50 { background-color: var(--secondary) !important; }
 .text-blue-700, .text-teal-700, .text-teal-800, .text-cyan-800 { color: var(--primary) !important; }
 .border-teal-100, .border-cyan-100 { border-color: var(--border) !important; }
-[class~="from-teal-700"] { --tw-gradient-from: var(--primary) var(--tw-gradient-from-position); --tw-gradient-to: color-mix(in srgb, var(--primary) 0%, transparent) var(--tw-gradient-to-position); }
-[class~="to-cyan-800"] { --tw-gradient-to: var(--brand-navy) var(--tw-gradient-to-position); }
-[class~="from-[#103d4b]"] { --tw-gradient-from: var(--brand-navy) var(--tw-gradient-from-position); }
-[class~="via-[#145a68]"] { --tw-gradient-via: var(--primary) var(--tw-gradient-via-position); }
-[class~="to-[#087e83]"] { --tw-gradient-to: var(--primary) var(--tw-gradient-to-position); }
+[class~="from-teal-700"], [class~="from-[#103d4b]"], [class~="from-[#123b4a]"] {
+  --tw-gradient-from: var(--brand-gradient-start) var(--tw-gradient-from-position);
+  --tw-gradient-to: color-mix(in srgb, var(--brand-gradient-start) 0%, transparent) var(--tw-gradient-to-position);
+}
+[class~="via-[#145a68]"], [class~="via-[#145969]"] { --tw-gradient-via: var(--brand-gradient-mid) var(--tw-gradient-via-position); }
+[class~="to-cyan-800"], [class~="to-[#087e83]"], [class~="to-[#0c777d]"] { --tw-gradient-to: var(--brand-gradient-end) var(--tw-gradient-to-position); }
+:root[data-theme="dark"] [class~="from-white"] { --tw-gradient-from: var(--card) var(--tw-gradient-from-position); }
+:root[data-theme="dark"] [class~="via-white"] { --tw-gradient-via: var(--card) var(--tw-gradient-via-position); }
+:root[data-theme="dark"] [class~="to-teal-50/70"] { --tw-gradient-to: var(--card) var(--tw-gradient-to-position); }
 
 header.border-b { border-color: var(--border); box-shadow: 0 1px 0 rgba(23, 43, 77, 0.025); }
 article.group { box-shadow: 0 2px 8px rgba(23, 43, 77, 0.035); }
