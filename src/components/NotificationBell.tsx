@@ -68,6 +68,12 @@ function NotificationBell() {
     (notification) => !notification.is_read,
   ).length;
 
+  const handleToggle = () => {
+    const nextOpen = !isOpen;
+    setIsOpen(nextOpen);
+    if (nextOpen) void fetchNotifications();
+  };
+
   const handleMarkAsRead = async (id: string) => {
     const { error } = await supabase
       .from("notifications")
@@ -128,7 +134,7 @@ function NotificationBell() {
     <div ref={containerRef} className="relative">
       <button
         type="button"
-        onClick={() => setIsOpen((prev) => !prev)}
+        onClick={handleToggle}
         className={`relative flex h-11 w-11 items-center justify-center rounded-xl border transition ${
           isOpen
             ? "border-gray-300 bg-gray-100 text-gray-900"
