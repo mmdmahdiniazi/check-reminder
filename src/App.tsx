@@ -241,6 +241,8 @@ function App() {
           prev.map((item) => (item.id === check.id ? check : item)),
         );
 
+        await createNotifications([check]);
+
         showToast("success", "چک با موفقیت ویرایش شد.");
       } else {
         const { data, error } = await supabase
@@ -279,6 +281,8 @@ function App() {
         };
 
         setChecks((prev) => [newCheck, ...prev]);
+
+        await createNotifications([newCheck]);
 
         showToast("success", "چک با موفقیت ثبت شد.");
       }
