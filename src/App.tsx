@@ -540,7 +540,6 @@ function App() {
             )}
           </section>
         </main>
-      </div>
       {isModalOpen && (
         <CheckModal
           check={editingCheck}
