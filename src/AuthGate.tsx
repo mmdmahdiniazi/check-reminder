@@ -12,6 +12,7 @@ import {
 } from "./components/ui/card";
 import { Input } from "./components/ui/input";
 import PhoneOtpForm from "./components/PhoneOtpForm";
+import ThemeToggle from "./components/ThemeToggle";
 
 type AuthMode = "signin" | "signup";
 
@@ -137,6 +138,9 @@ export default function AuthGate() {
       dir="rtl"
       className="relative flex min-h-screen items-center justify-center overflow-hidden px-4 py-10 sm:px-6"
     >
+      <div className="absolute left-4 top-4 z-30">
+        <ThemeToggle />
+      </div>
       <div
         aria-hidden="true"
         className="pointer-events-none absolute -right-24 -top-24 h-72 w-72 rounded-full bg-teal-200/30 blur-3xl"

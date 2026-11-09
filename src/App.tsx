@@ -4,6 +4,7 @@ import CheckCard from "./components/CheckCard";
 import AdminPanel from "./components/AdminPanel";
 import CheckModal from "./components/CheckModal";
 import NotificationBell from "./components/NotificationBell";
+import ThemeToggle from "./components/ThemeToggle";
 import Toast from "./components/Toast";
 import { Button } from "./components/ui/button";
 import { Input } from "./components/ui/input";
@@ -486,6 +487,7 @@ function App() {
                 پنل مدیریت
               </button>
             )}
+            <ThemeToggle />
             <NotificationBell />
 
             <button
